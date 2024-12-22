@@ -1,0 +1,42 @@
+export const users = [
+  {
+    id: 1,
+    username: "nguyenvana",
+    email: "nguyenvana@example.com",
+    password: "$2b$10$eB1Hl5QYPp.QhnW8/.hUZObWpZ2RmA35kN.qIOJxPzAhPjMFSfpD6",
+    role: "admin",
+    active: true,
+  },
+  {
+    id: 2,
+    username: "tranminhb",
+    email: "tranminhb@example.com",
+    password: "$2b$10$Zp8jUcYeHQm13L7nQ0/sD.XgNdLTAYtb7MEH16/9PbiHdAW0Aq1ma",
+    role: "user",
+    active: true,
+  },
+  {
+    id: 3,
+    username: "lekhoa",
+    email: "lekhoa@example.com",
+    password: "$2b$10$k7G3I8UVUz7KuG9VLNkE4uPcTGH7xHAFWjwCymhC/PnXeUpz7P/36",
+    role: "moderator",
+    active: false,
+  },
+  {
+    id: 4,
+    username: "phanthic",
+    email: "phanthic@example.com",
+    password: "$2b$10$dPf5YktpJ6EtqYKoG68/ZebChOb5Tld01GyJAwBN5oIM9i8M3l66y",
+    role: "user",
+    active: true,
+  },
+  {
+    id: 5,
+    username: "vuhoangd",
+    email: "vuhoangd@example.com",
+    password: "$2b$10$tECfQd2TMsY/AFdUJq3M1e8m3dG/okVRV59t.YRM2Jlxd5e6GeTVG",
+    role: "admin",
+    active: true,
+  },
+];
