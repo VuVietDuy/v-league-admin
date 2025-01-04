@@ -2,6 +2,20 @@ body {
   margin: 0;
 }
 
+.ant-upload {
+  width: 100% !important;
+  height: 200px !important;
+}
+
+.ant-upload-list-item-container {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.ant-upload-list-item {
+  width: 100% !important;
+}
+
 .flex {
   display: flex;
 }

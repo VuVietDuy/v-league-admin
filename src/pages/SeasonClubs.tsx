@@ -1,9 +1,8 @@
 import { Button, Card, Input, Space, Table, TableProps } from "antd";
-import { Club } from "../type/club";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
-import { clubs } from "../data/clubs";
+import { IClub } from "../type/club";
 
-const columns: TableProps<Club>["columns"] = [
+const columns: TableProps<IClub>["columns"] = [
   {
     title: "Họ tên",
     dataIndex: "name",
@@ -45,7 +44,7 @@ function SeasonClubs() {
         </div>
         <Button type="primary">Thêm clb </Button>
       </div>
-      <Table<Club> columns={columns} dataSource={clubs} />
+      <Table<IClub> columns={columns} dataSource={[]} />
     </Card>
   );
 }

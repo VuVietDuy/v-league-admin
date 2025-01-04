@@ -12,28 +12,47 @@ import SeasonClubs from "./pages/SeasonClubs";
 import Fixture from "./pages/Fixture";
 import CurrentSeason from "./pages/CurrentSeason";
 import Tables from "./pages/Tables";
+import { Provider } from "react-redux";
+import { store } from "./store/store";
+import Login from "./pages/Login";
 
 function App() {
   return (
-    <BrowserRouter>
-      <RootLayout>
+    <Provider store={store}>
+      <BrowserRouter>
         <Routes>
-          <Route path="users" element={<UserManagement />} />
-          <Route path="category/:season" element={<Category />} />
-          <Route path="current-season/:season" element={<CurrentSeason />} />
-          <Route path="fixture/:season" element={<Fixture />} />
-          <Route path="tables/:season" element={<Tables />} />
-          <Route path="season-clubs/:season" element={<SeasonClubs />} />
-          <Route path="category/:season" element={<Category />} />
-          <Route path="players" element={<PlayerManagement />} />
-          <Route path="players/new" element={<PlayerDetails />} />
-          <Route path="clubs" element={<ClubManagement />} />
-          <Route path="clubs/new" element={<ClubDetails />} />
-          <Route path="news" element={<NewsManagement />} />
-          <Route path="news/new" element={<NewsDetails />} />
+          <Route path="login" element={<Login />} />
+          <Route
+            path="*"
+            element={
+              <RootLayout>
+                <Routes>
+                  <Route path="users" element={<UserManagement />} />
+                  <Route path="category/:season" element={<Category />} />
+                  <Route
+                    path="current-season/:season"
+                    element={<CurrentSeason />}
+                  />
+                  <Route path="fixture/:season" element={<Fixture />} />
+                  <Route path="tables/:season" element={<Tables />} />
+                  <Route
+                    path="season-clubs/:season"
+                    element={<SeasonClubs />}
+                  />
+                  <Route path="category/:season" element={<Category />} />
+                  <Route path="players" element={<PlayerManagement />} />
+                  <Route path="players/new" element={<PlayerDetails />} />
+                  <Route path="clubs" element={<ClubManagement />} />
+                  <Route path="clubs/new" element={<ClubDetails />} />
+                  <Route path="news" element={<NewsManagement />} />
+                  <Route path="news/new" element={<NewsDetails />} />
+                </Routes>
+              </RootLayout>
+            }
+          />
         </Routes>
-      </RootLayout>
-    </BrowserRouter>
+      </BrowserRouter>
+    </Provider>
   );
 }
 

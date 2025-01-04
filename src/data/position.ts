@@ -1,18 +1,18 @@
 export const position = [
   {
-    key: "goalkeeper",
+    key: "Thủ môn",
     name: "Thủ môn",
   },
   {
-    key: "defender",
+    key: "Hậu về",
     name: "Hậu vệ",
   },
   {
-    key: "midfielder",
+    key: "Tiền vệ",
     name: "Tiền vệ",
   },
   {
-    key: "forward",
+    key: "Tiền đạo",
     name: "Tiền đạo",
   },
 ];

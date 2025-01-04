@@ -1,9 +1,10 @@
-export interface Player {
+export interface IPlayer {
   id: number;
   name: string;
-  team: string;
-  position: string;
-  age: number;
+  imageURL: string;
   nationality: string;
-  goals: number;
+  dateOfBirth: string;
+  height: number;
+  position: string;
+  clubId: string;
 }

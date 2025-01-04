@@ -130,44 +130,6 @@ const NewsDetails: React.FC = () => {
           </Button>
         </Form.Item>
       </Form>
-
-      <div style={{ marginTop: 40 }}>
-        <h2>Danh Sách Bài Đăng</h2>
-        {posts.length === 0 ? (
-          <p>Chưa có bài viết nào được đăng.</p>
-        ) : (
-          posts.map((post) => (
-            <div
-              key={post.id}
-              style={{
-                border: "1px solid #ddd",
-                padding: 20,
-                borderRadius: 5,
-                marginBottom: 20,
-              }}
-            >
-              <h3>{post.title}</h3>
-              <p>
-                <strong>Mô tả:</strong> {post.description}
-              </p>
-              <p>
-                <strong>Danh mục:</strong> {post.category}
-              </p>
-              <p>
-                <strong>Ngày đăng:</strong> {post.date}
-              </p>
-              {post.image && (
-                <img
-                  src={post.image}
-                  alt="Ảnh bài viết"
-                  style={{ maxWidth: "100%", height: "auto" }}
-                />
-              )}
-              <p>{post.content}</p>
-            </div>
-          ))
-        )}
-      </div>
     </div>
   );
 };

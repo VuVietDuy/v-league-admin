@@ -1,8 +1,10 @@
-export interface Club {
+export interface IClub {
   id: number;
   name: string;
-  stadium: string;
+  shortName: string;
   coach: string;
-  location: string;
-  founded_year: number;
+  stadium: string;
+  logoURL: string;
+  stadiumDescription: string;
+  foundedYear: string;
 }
