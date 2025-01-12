@@ -166,7 +166,6 @@ const RootLayout: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
 
   const getSelectedKeys = () => {
     const pathSegments = location.pathname.split("/").filter(Boolean);
-    console.log(pathSegments);
     if (
       [
         "current-season",

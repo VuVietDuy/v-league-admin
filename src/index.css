@@ -1,5 +1,11 @@
-body {
-  margin: 0;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .btn {
+    @apply text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800;
+  }
 }
 
 .ant-upload {
@@ -14,84 +20,4 @@ body {
 
 .ant-upload-list-item {
   width: 100% !important;
-}
-
-.flex {
-  display: flex;
-}
-
-.justify-between {
-  justify-content: space-between;
-}
-
-.justify-center {
-  justify-content: center;
-}
-
-.m-1 {
-  margin: 4px;
-}
-
-.m-2 {
-  margin: 8px;
-}
-
-.m-3 {
-  margin: 12px;
-}
-
-.m-4 {
-  margin: 16px;
-}
-
-.m-5 {
-  margin: 20px;
-}
-
-.m-6 {
-  margin: 24px;
-}
-
-.mb-1 {
-  margin-bottom: 4px;
-}
-
-.mb-2 {
-  margin-bottom: 8px;
-}
-
-.mb-3 {
-  margin-bottom: 12px;
-}
-
-.mb-4 {
-  margin-bottom: 16px;
-}
-
-.mb-5 {
-  margin-bottom: 20px;
-}
-
-.mb-6 {
-  margin-bottom: 24px;
-}
-
-.p-2 {
-  padding: 8px;
-}
-
-.p-3 {
-  padding: 12px;
-}
-
-.p-4 {
-  padding: 16px;
-}
-
-.p-5 {
-  padding: 20px;
-}
-
-.p-6 {
-  padding: 24px;
 }

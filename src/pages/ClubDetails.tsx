@@ -40,7 +40,6 @@ const ClubDetails: React.FC = () => {
     fetcher
       .post("clubs", formData)
       .then((res) => {
-        console.log(res);
         navigate("/clubs");
         message.success("Câu lạc bộ đã được thêm thành công!");
         setLoading(false);

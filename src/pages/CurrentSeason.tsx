@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Table, Card, Typography, Row, Col, Statistic, Select } from "antd";
+import { Link, useParams } from "react-router-dom";
 
 const { Title } = Typography;
 const { Option } = Select;
@@ -44,6 +45,8 @@ const seasonStats = {
 
 const CurrentSeason: React.FC = () => {
   const [selectedTeam, setSelectedTeam] = useState<string | null>(null);
+  const { tournament } = useParams();
+  console.log(tournament);
 
   // Cột của bảng thống kê
   const columns = [
@@ -86,7 +89,14 @@ const CurrentSeason: React.FC = () => {
 
   return (
     <div style={{ padding: 20 }}>
-      <Title level={2}>Thống Kê Mùa Giải</Title>
+      <div className="flex justify-between">
+        <Title level={2}>Thống Kê Mùa Giải</Title>
+        <div>
+          <Link className="btn" to={`/new-season/${tournament}`}>
+            Mùa giải mới
+          </Link>
+        </div>
+      </div>
 
       {/* Thống kê tổng quan */}
       <Row gutter={16} style={{ marginBottom: 20 }}>
