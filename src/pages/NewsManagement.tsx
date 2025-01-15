@@ -1,11 +1,12 @@
 import { Badge, Button, Card, Input, Space, Table, Tag } from "antd";
 import type { TableProps } from "antd";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
-import { News } from "../type/news";
-import { listNews } from "../data/news";
+import { INews } from "../type/news";
 import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import fetcher from "../api/fetcher";
 
-const columns: TableProps<News>["columns"] = [
+const columns: TableProps<INews>["columns"] = [
   {
     title: "Ảnh bìa",
     dataIndex: "thumbnail",
@@ -42,6 +43,15 @@ const columns: TableProps<News>["columns"] = [
 
 function NewsManagement() {
   const navigate = useNavigate();
+  const [newsData, setNewsData] = useState<INews[]>([]);
+
+  useEffect(() => {
+    fetcher.get("news").then((res) => {
+      console.log(res);
+      setNewsData(res.data);
+    });
+  }, []);
+
   return (
     <Card className="m-6">
       <div className="flex justify-between mb-3">
@@ -52,7 +62,7 @@ function NewsManagement() {
           Thêm tin tức
         </Button>
       </div>
-      <Table<News> columns={columns} dataSource={listNews} />
+      <Table<INews> columns={columns} dataSource={newsData} />
     </Card>
   );
 }

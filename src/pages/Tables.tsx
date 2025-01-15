@@ -1,133 +1,117 @@
-import React, { useState } from "react";
-import { Table, Card, Typography } from "antd";
+import { useEffect, useState } from "react";
 
-const { Title } = Typography;
+import { useParams } from "react-router-dom";
+import fetcher from "../api/fetcher";
+import { IClub } from "../type/club";
+import { Card } from "antd";
 
-// Dữ liệu giả lập cho bảng xếp hạng
-const rankingData = [
-  {
-    key: "1",
-    position: 1,
-    team: "Hà Nội FC",
-    matches: 20,
-    wins: 14,
-    draws: 4,
-    losses: 2,
-    goalDifference: 25,
-    points: 46,
-  },
-  {
-    key: "2",
-    position: 2,
-    team: "Hoàng Anh Gia Lai",
-    matches: 20,
-    wins: 12,
-    draws: 5,
-    losses: 3,
-    goalDifference: 18,
-    points: 41,
-  },
-  {
-    key: "3",
-    position: 3,
-    team: "Viettel FC",
-    matches: 20,
-    wins: 11,
-    draws: 6,
-    losses: 3,
-    goalDifference: 15,
-    points: 39,
-  },
-  {
-    key: "4",
-    position: 4,
-    team: "Sông Lam Nghệ An",
-    matches: 20,
-    wins: 9,
-    draws: 7,
-    losses: 4,
-    goalDifference: 10,
-    points: 34,
-  },
-  {
-    key: "5",
-    position: 5,
-    team: "Bình Dương FC",
-    matches: 20,
-    wins: 8,
-    draws: 6,
-    losses: 6,
-    goalDifference: 8,
-    points: 30,
-  },
-];
+interface TablesItem {
+  position?: number;
+  club: IClub;
+  played?: number;
+  won?: number;
+  drawn?: number;
+  lost?: number;
+  goalsFor?: number;
+  goalsAgainst?: number;
+  goalDifference: number;
+  points: number;
+}
 
-const Tables: React.FC = () => {
-  const [data, setData] = useState(rankingData);
+function Tables() {
+  const [data, setData] = useState<TablesItem[]>([]);
+  const { tournament } = useParams();
+  console.log(tournament);
 
-  // Cấu hình các cột trong bảng
-  const columns = [
-    {
-      title: "Hạng",
-      dataIndex: "position",
-      key: "position",
-      render: (position: number) => (
-        <strong style={{ color: position === 1 ? "gold" : undefined }}>
-          {position}
-        </strong>
-      ),
-    },
-    {
-      title: "Đội bóng",
-      dataIndex: "team",
-      key: "team",
-    },
-    {
-      title: "Trận",
-      dataIndex: "matches",
-      key: "matches",
-    },
-    {
-      title: "Thắng",
-      dataIndex: "wins",
-      key: "wins",
-    },
-    {
-      title: "Hòa",
-      dataIndex: "draws",
-      key: "draws",
-    },
-    {
-      title: "Thua",
-      dataIndex: "losses",
-      key: "losses",
-    },
-    {
-      title: "Hiệu số",
-      dataIndex: "goalDifference",
-      key: "goalDifference",
-    },
-    {
-      title: "Điểm",
-      dataIndex: "points",
-      key: "points",
-      render: (points: number) => <strong>{points}</strong>,
-    },
-  ];
-
+  useEffect(() => {
+    fetcher.get(`tournaments/${tournament}/tables`).then((res) => {
+      console.log(res);
+      setData(res.data);
+    });
+  }, []);
   return (
-    <div style={{ padding: "20px" }}>
-      <Title level={2}>Bảng Xếp Hạng V.League</Title>
-      <Card>
-        <Table
-          columns={columns}
-          dataSource={data}
-          pagination={false}
-          bordered
-        />
-      </Card>
-    </div>
+    <Card className="m-6">
+      <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-500">
+        <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 border-b">
+          <tr>
+            <th scope="col" className="px-6 py-3 font-bold">
+              Thứ hạng
+            </th>
+            <th scope="col" className="px-6 py-3">
+              Câu lạc bộ
+            </th>
+            <th scope="col" className="px-3 py-3 w-fit">
+              Trận
+            </th>
+            <th scope="col" className="px-3 py-3">
+              Thắng
+            </th>
+            <th scope="col" className="px-3 py-3">
+              Hòa
+            </th>
+            <th scope="col" className="px-3 py-3">
+              Thua
+            </th>
+            <th scope="col" className="px-3 py-3">
+              BT-BB
+            </th>
+            <th scope="col" className="px-3 py-3">
+              HS
+            </th>
+            <th scope="col" className="px-3 py-3">
+              BTSK
+            </th>
+            <th scope="col" className="px-3 py-3  hidden lg:block">
+              Gần đây
+            </th>
+            <th scope="col" className="px-6 py-3">
+              Điểm
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {data.map((item, index) => (
+            <tr
+              key={index}
+              className="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 border-b dark:border-gray-700"
+            >
+              <td className="px-6 py-2 relative">
+                {index <= 3 && (
+                  <div className="absolute top-0 left-0 w-1 h-full bg-[#1b39f5]"></div>
+                )}
+                {index == 4 && (
+                  <div className="absolute top-0 left-0 w-1 h-full bg-[#ff6900]"></div>
+                )}
+                {index == 5 && (
+                  <div className="absolute top-0 left-0 w-1 h-full bg-[#00be14]"></div>
+                )}
+                {index + 1}
+              </td>
+              <td className="px-6 py-2 flex items-center gap-2">
+                <img
+                  className="w-8 h-8 rounded-full"
+                  src={item.club.logoURL}
+                  alt=""
+                />
+                <span className="font-semibold">{item.club.name}</span>
+              </td>
+              <td className="px-6 py-2">{item.played}</td>
+              <td className="px-6 py-2">{item.won}</td>
+              <td className="px-6 py-2">{item.drawn}</td>
+              <td className="px-6 py-2">{item.lost}</td>
+              <td className="px-6 py-2">{item.goalsFor}</td>
+              <td className="px-6 py-2">{item.goalsAgainst}</td>
+              <td className="px-6 py-2">{item.goalDifference}</td>
+              <td className="px-6 py-2 hidden lg:block"></td>
+              <td className="px-6 py-2 font-bold text-red-600">
+                {item.points}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </Card>
   );
-};
+}
 
 export default Tables;

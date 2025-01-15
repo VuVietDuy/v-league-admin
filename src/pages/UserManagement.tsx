@@ -97,7 +97,7 @@ function UserManagement() {
           <Input></Input>
         </div>
       </div>
-      <Table<DataType> columns={columns} dataSource={data} />;
+      <Table<DataType> columns={columns} dataSource={data} />
     </Card>
   );
 }

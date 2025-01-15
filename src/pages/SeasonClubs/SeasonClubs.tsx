@@ -63,7 +63,7 @@ function SeasonClubs() {
       .catch((err) => {
         console.log(err);
       });
-  }, []);
+  }, [tournament]);
 
   const showModal = () => {
     setIsOpenModalAddClub(true);

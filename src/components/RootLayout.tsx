@@ -29,11 +29,11 @@ const siderStyle: React.CSSProperties = {
 };
 
 const menuItems = [
-  {
-    key: "1",
-    icon: <BarChartOutlined style={{ width: "24px" }} />,
-    label: "Thống kê",
-  },
+  // {
+  //   key: "1",
+  //   icon: <BarChartOutlined style={{ width: "24px" }} />,
+  //   label: "Thống kê",
+  // },
   {
     key: "vleague-1",
     icon: <img src={Vleague1} width={24} />,

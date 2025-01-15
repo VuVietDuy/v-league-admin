@@ -41,7 +41,7 @@ export default function CreateMatch({ ...props }) {
         tournamentId: tournament,
       };
       fetcher.post("matches", data).then((res) => {
-        message.success(res.data.data.message);
+        message.success(res.data.message);
         props.onCancel();
       });
     });

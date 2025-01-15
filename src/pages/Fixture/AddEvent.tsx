@@ -29,18 +29,15 @@ export default function AddEvent({
       values.matchId = parseInt(values.matchId);
       values.eventTime = parseInt(values.eventTime);
       fetcher.post(`matches/${matchId}/events`, values).then((res) => {
-        console.log(res);
         message.success(res.data.message);
+        onCancel();
       });
     }
   };
 
-  console.log(homeClub);
-
   useEffect(() => {
     console.log(clubId);
     fetcher.get(`clubs/${clubId}/players`).then((res) => {
-      console.log(res);
       setPlayers(res.data.data.players);
     });
   }, [clubId]);
@@ -61,7 +58,7 @@ export default function AddEvent({
         layout="vertical"
       >
         {matchId && (
-          <Form.Item name={"matchId"} className="">
+          <Form.Item name={"matchId"} className="hidden">
             <Input value={matchId} />
           </Form.Item>
         )}
