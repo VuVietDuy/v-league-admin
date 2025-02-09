@@ -12,6 +12,8 @@
   "dependencies": {
     "@ant-design/icons": "^5.5.2",
     "@reduxjs/toolkit": "^2.5.0",
+    "@tanstack/react-query": "^5.64.2",
+    "@tinymce/tinymce-react": "^5.1.1",
     "antd": "^5.22.5",
     "antd-img-crop": "^4.24.0",
     "axios": "^1.7.9",
@@ -24,6 +26,9 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.15.0",
+    "@types/node": "^22.10.10",
+    "@types/babel__core": "^7.20.5",
+    "@types/babel-generator": "^6.25.8",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "@types/redux-persist": "^4.0.0",

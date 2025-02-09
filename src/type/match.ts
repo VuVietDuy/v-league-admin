@@ -2,11 +2,16 @@ import { IClub } from "./club";
 import { IEvent } from "./event";
 
 export interface IMatch {
-  id?: number;
+  id: number;
+  homeClubId: number;
+  awayClubId: number;
+  homeScore: number;
+  awayScore: number;
   homeClub?: IClub;
   awayClub?: IClub;
   stadium?: string;
-  date?: string;
+  status?: string;
+  date: string;
   time?: string;
   events?: IEvent[];
 }

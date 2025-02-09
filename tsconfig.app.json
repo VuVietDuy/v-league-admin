@@ -7,6 +7,8 @@
     "lib": ["ES2020", "DOM", "DOM.Iterable"],
     "module": "ESNext",
     "skipLibCheck": true,
+    "types": ["babel__generator"],
+    "typeRoots": ["node_modules/@types", "path/to/your/custom/types"],
 
     /* Bundler mode */
     "moduleResolution": "Bundler",
@@ -15,6 +17,11 @@
     "moduleDetection": "force",
     "noEmit": true,
     "jsx": "react-jsx",
+
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    },
 
     /* Linting */
     "strict": true,

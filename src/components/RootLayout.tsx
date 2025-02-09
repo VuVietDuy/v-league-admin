@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Button, Layout, Menu, theme } from "antd";
 import {
-  BarChartOutlined,
   CameraOutlined,
   CopyrightOutlined,
   MenuFoldOutlined,
@@ -9,10 +8,9 @@ import {
   UsergroupAddOutlined,
   UserOutlined,
 } from "@ant-design/icons";
-import { NavLink, useLocation } from "react-router-dom";
-import Vleague1 from "../assets/VLeague1.png";
-import Vleague2 from "../assets/VLeague2.png";
-import NationalCup from "../assets/NationalCup.png";
+import { NavLink, Outlet, useLocation } from "react-router-dom";
+import Vleague1 from "@/assets/VLeague1.png";
+import Vleague2 from "@/assets/VLeague2.png";
 
 const { Header, Sider, Content } = Layout;
 
@@ -45,9 +43,9 @@ const menuItems = [
         path: "/current-season/vleague-1",
       },
       {
-        key: "fixture/vleague-1",
+        key: "match/vleague-1",
         label: "Lịch thi đấu",
-        path: "/fixture/vleague-1",
+        path: "/match/vleague-1",
       },
       {
         key: "tables/vleague-1",
@@ -77,9 +75,9 @@ const menuItems = [
         path: "/current-season/vleague-2",
       },
       {
-        key: "fixture/vleague-2",
+        key: "match/vleague-2",
         label: "Lịch thi đấu",
-        path: "/fixture/vleague-2",
+        path: "/match/vleague-2",
       },
       {
         key: "tables/vleague-2",
@@ -95,38 +93,6 @@ const menuItems = [
         key: "category/vleague-2",
         label: "Điều lệ",
         path: "/category/vleague-2",
-      },
-    ],
-  },
-  {
-    key: "national-cup",
-    icon: <img src={NationalCup} width={24} />,
-    label: "Cúp quốc gia",
-    children: [
-      {
-        key: "current-season/national-cup",
-        label: "Mùa giải hiện tại",
-        path: "/current-season/national-cup",
-      },
-      {
-        key: "fixture/national-cup",
-        label: "Lịch thi đấu",
-        path: "/fixture/national-cup",
-      },
-      {
-        key: "tables/national-cup",
-        label: "Bảng thi đấu",
-        path: "/tables/national-cup",
-      },
-      {
-        key: "season-clubs/national-cup",
-        label: "Đội bóng",
-        path: "/season-clubs/national-cup",
-      },
-      {
-        key: "category/national-cup",
-        label: "Điều lệ",
-        path: "/category/national-cup",
       },
     ],
   },
@@ -156,7 +122,7 @@ const menuItems = [
   },
 ];
 
-const RootLayout: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
+const RootLayout = () => {
   const [collapsed, setCollapsed] = useState(false);
   const location = useLocation();
 
@@ -170,7 +136,7 @@ const RootLayout: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
       [
         "current-season",
         "season-clubs",
-        "fixture",
+        "match",
         "category",
         "tables",
       ].includes(pathSegments[0])
@@ -233,7 +199,9 @@ const RootLayout: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
             }}
           />
         </Header>
-        <Content>{children}</Content>
+        <Content>
+          <Outlet />
+        </Content>
       </Layout>
     </Layout>
   );

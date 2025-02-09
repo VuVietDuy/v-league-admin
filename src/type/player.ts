@@ -6,5 +6,6 @@ export interface IPlayer {
   dateOfBirth: string;
   height: number;
   position: string;
+  shirtNumber: number;
   clubId: string;
 }
