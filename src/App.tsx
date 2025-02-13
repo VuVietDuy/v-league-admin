@@ -23,6 +23,7 @@ import ClubEdit from "@/pages/Club/ClubEdit";
 import MatchList from "@/pages/Match/MatchList";
 import MatchDetail from "@/pages/Match/MatchDetail/MatchDetail";
 import SeasonClubs from "@/pages/Season/SeasonClubs/SeasonClubs";
+import Login from "./pages/Auth/Login";
 
 const queryClient = new QueryClient();
 
