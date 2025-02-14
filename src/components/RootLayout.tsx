@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Layout, Menu, theme } from "antd";
 import {
   CameraOutlined,
@@ -8,9 +8,11 @@ import {
   UsergroupAddOutlined,
   UserOutlined,
 } from "@ant-design/icons";
-import { NavLink, Outlet, useLocation } from "react-router-dom";
+import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import Vleague1 from "@/assets/VLeague1.png";
 import Vleague2 from "@/assets/VLeague2.png";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store/store";
 
 const { Header, Sider, Content } = Layout;
 
@@ -130,6 +132,15 @@ const RootLayout = () => {
     token: { colorBgContainer },
   } = theme.useToken();
 
+  const accessToken = useSelector(
+    (state: RootState) => state.token.accessToken
+  );
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (!accessToken) {
+      navigate("/login");
+    }
+  }, [accessToken]);
   const getSelectedKeys = () => {
     const pathSegments = location.pathname.split("/").filter(Boolean);
     if (
