@@ -1,138 +1,85 @@
-import { Button, Checkbox, Form, Grid, Input, theme, Typography } from "antd";
+import fetcher from "@/api/fetcher";
+import { setToken } from "@/store/slice/token.slice";
+import { loginUser } from "@/store/slice/user.slice";
+import { ErrorMessage, Formik } from "formik";
+import { useDispatch } from "react-redux";
+import { NavLink, useNavigate } from "react-router-dom";
 
-import { LockOutlined, MailOutlined } from "@ant-design/icons";
-
-const { useToken } = theme;
-const { useBreakpoint } = Grid;
-const { Text, Title, Link } = Typography;
-
-export default function Login() {
-  const { token } = useToken();
-  const screens = useBreakpoint();
-
-  const onFinish = (values: any) => {
-    console.log("Received values of form: ", values);
+function Login() {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const handleSubmit = (values: any) => {
+    console.log(values);
+    fetcher.post("auth/login", values).then((res) => {
+      console.log(res);
+      dispatch(loginUser(res.data.data.user));
+      dispatch(setToken(res.data.data.accessToken));
+      navigate("/");
+    });
   };
-
-  const styles = {
-    container: {
-      margin: "0 auto",
-      padding: screens.md
-        ? `${token.paddingXL}px`
-        : `${token.sizeXXL}px ${token.padding}px`,
-      width: "380px",
-    },
-    footer: {
-      marginTop: token.marginLG,
-      textAlign: "center",
-      width: "100%",
-    },
-    forgotPassword: {
-      float: "right",
-    },
-    header: {
-      marginBottom: token.marginXL,
-    },
-    section: {
-      alignItems: "center",
-      backgroundColor: token.colorBgContainer,
-      display: "flex",
-      height: screens.sm ? "100vh" : "auto",
-      padding: screens.md ? `${token.sizeXXL}px 0px` : "0px",
-    },
-    text: {
-      color: token.colorTextSecondary,
-    },
-    title: {
-      fontSize: screens.md ? token.fontSizeHeading2 : token.fontSizeHeading3,
-    },
-  };
-
   return (
-    <section style={styles.section}>
-      <div style={styles.container}>
-        <div style={styles.header}>
-          <svg
-            width="25"
-            height="24"
-            viewBox="0 0 25 24"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <rect x="0.464294" width="24" height="24" rx="4.8" fill="#1890FF" />
-            <path
-              d="M14.8643 3.6001H20.8643V9.6001H14.8643V3.6001Z"
-              fill="white"
-            />
-            <path
-              d="M10.0643 9.6001H14.8643V14.4001H10.0643V9.6001Z"
-              fill="white"
-            />
-            <path
-              d="M4.06427 13.2001H11.2643V20.4001H4.06427V13.2001Z"
-              fill="white"
-            />
-          </svg>
-
-          <Title style={styles.title}>Sign in</Title>
-          <Text style={styles.text}>
-            Welcome back to AntBlocks UI! Please enter your details below to
-            sign in.
-          </Text>
-        </div>
-        <Form
-          name="normal_login"
+    <div className="container flex flex-col items-center justify-center m-auto  h-screen">
+      <h1 className="text-3xl font-bold text-gray-900 mb-12 text-center mx-auto">
+        V-League Admin
+      </h1>
+      <div className="w-[500px] ">
+        <Formik
           initialValues={{
-            remember: true,
+            email: "",
+            password: "",
           }}
-          onFinish={onFinish}
-          layout="vertical"
-          requiredMark="optional"
+          onSubmit={handleSubmit}
         >
-          <Form.Item
-            name="email"
-            rules={[
-              {
-                type: "email",
-                required: true,
-                message: "Please input your Email!",
-              },
-            ]}
-          >
-            <Input prefix={<MailOutlined />} placeholder="Email" />
-          </Form.Item>
-          <Form.Item
-            name="password"
-            rules={[
-              {
-                required: true,
-                message: "Please input your Password!",
-              },
-            ]}
-          >
-            <Input.Password
-              prefix={<LockOutlined />}
-              type="password"
-              placeholder="Password"
-            />
-          </Form.Item>
-          <Form.Item>
-            <Form.Item name="remember" valuePropName="checked" noStyle>
-              <Checkbox>Remember me</Checkbox>
-            </Form.Item>
-            <a href="">Forgot password?</a>
-          </Form.Item>
-          <Form.Item style={{ marginBottom: "0px" }}>
-            <Button type="primary" htmlType="submit">
-              Log in
-            </Button>
-            <div>
-              <Text style={styles.text}>Don't have an account?</Text>{" "}
-              <Link href="">Sign up now</Link>
-            </div>
-          </Form.Item>
-        </Form>
+          {({ handleSubmit, handleChange, values }) => (
+            <form onSubmit={handleSubmit}>
+              <div className="px-3">
+                <div className="flex flex-col mb-3">
+                  <label className="mb-1.5 font-semibold" htmlFor="">
+                    Địa chỉ email
+                  </label>
+                  <input
+                    name="email"
+                    value={values.email}
+                    onChange={handleChange}
+                    className="p-2 text-sm h-12 bg-blue-50 border-b"
+                    type="email"
+                  />
+                  <ErrorMessage name="email" />
+                </div>
+                <div className="flex flex-col mb-6">
+                  <label className="mb-1.5 font-semibold" htmlFor="">
+                    Mật khẩu
+                  </label>
+                  <input
+                    name="password"
+                    value={values.password}
+                    onChange={handleChange}
+                    className="p-2 text-sm h-12 bg-blue-50 border-b"
+                    type="password"
+                  />
+                  <ErrorMessage name="password" />
+                </div>
+                <div className="flex flex-col">
+                  <button
+                    type="submit"
+                    className="flex justify-center items-center p-2 font-bold text-white bg-blue-500 h-12 bg-primary"
+                  >
+                    Đăng nhập
+                  </button>
+                </div>
+              </div>
+            </form>
+          )}
+        </Formik>
+        <p className="text-center mt-4">
+          Bạn chưa có tài khoản?{" "}
+          <NavLink className={"text-blue-600 "} to="/register">
+            Đăng ký
+          </NavLink>
+        </p>
       </div>
-    </section>
+    </div>
   );
 }
+
+export default Login;
