@@ -132,10 +132,9 @@ const RootLayout = () => {
     token: { colorBgContainer },
   } = theme.useToken();
 
-  const accessToken = useSelector(
-    (state: RootState) => state.token.accessToken
-  );
+  const accessToken = useSelector((state: RootState) => state.token);
   const navigate = useNavigate();
+  console.log("check token", accessToken);
   useEffect(() => {
     if (!accessToken) {
       navigate("/login");

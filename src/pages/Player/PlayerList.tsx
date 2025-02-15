@@ -58,7 +58,7 @@ function PlayerList() {
   };
 
   const handleEdit = (playerId: number) => {
-    navigate(`/players/edit/${playerId}`);
+    navigate(`/players/${playerId}/edit`);
   };
 
   const columns: TableProps<IPlayer>["columns"] = [
@@ -85,7 +85,7 @@ function PlayerList() {
       key: "dateOfBirth",
     },
     {
-      title: "Vị trí thi đấu",
+      title: "Quản lý câu lạc bộ",
       dataIndex: "club",
       key: "club",
       render: (_: any, record: any) => <span>{record.club?.name}</span>,

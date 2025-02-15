@@ -13,7 +13,7 @@ function Login() {
     fetcher.post("auth/login", values).then((res) => {
       console.log(res);
       dispatch(loginUser(res.data.data.user));
-      dispatch(setToken(res.data.data.accessToken));
+      dispatch(setToken(res.data.data.access_token));
       navigate("/");
     });
   };
