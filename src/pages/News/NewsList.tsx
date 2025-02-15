@@ -7,6 +7,25 @@ import { INews } from "@/type/news";
 import fetcher from "@/api/fetcher";
 import { useQuery } from "@tanstack/react-query";
 
+function NewsList() {
+  const navigate = useNavigate();
+  const [key, setKey] = useState("");
+  const { data: newsData, refetch } = useQuery({
+    queryKey: ["GET_LIST_NEWS"],
+    queryFn: async () => {
+      let params = {};
+      if (key) {
+        params = { ...params, key: key };
+      }
+      return fetcher.get("news", { params: params }).then((res) => res.data);
+    },
+  });
+
+  useEffect(() => {
+    refetch();
+  }, [key]);
+
+  
 const columns: TableProps<INews>["columns"] = [
   {
     title: "Ảnh bìa",
@@ -42,23 +61,6 @@ const columns: TableProps<INews>["columns"] = [
   },
 ];
 
-function NewsList() {
-  const navigate = useNavigate();
-  const [key, setKey] = useState("");
-  const { data: newsData, refetch } = useQuery({
-    queryKey: ["GET_LIST_NEWS"],
-    queryFn: async () => {
-      let params = {};
-      if (key) {
-        params = { ...params, key: key };
-      }
-      return fetcher.get("news", { params: params }).then((res) => res.data);
-    },
-  });
-
-  useEffect(() => {
-    refetch();
-  }, [key]);
 
   return (
     <Card className="m-6">

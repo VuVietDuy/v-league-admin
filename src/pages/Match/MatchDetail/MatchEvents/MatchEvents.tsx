@@ -1,4 +1,4 @@
-import { Button, Select, Table } from "antd";
+import { Button, Select, Spin, Table } from "antd";
 import { useEffect, useState } from "react";
 import { IEvent } from "@/type/event";
 import AddEvent from "./AddEvent";
@@ -90,19 +90,23 @@ export default function MatchEvents() {
     <div className="mt-4">
       <div className="flex mb-4">
         <div className="flex flex-1 gap-4">
-          <Select
-            defaultValue={""}
-            onChange={(e) => setSelectedClubId(e)}
-            className="w-40"
-          >
-            <Select.Option value="">Tất cả đội bóng</Select.Option>
-            <Select.Option value={data?.homeClubId}>
-              {data?.homeClub?.name}
-            </Select.Option>
-            <Select.Option value={data?.awayClubId}>
-              {data?.awayClub?.name}
-            </Select.Option>
-          </Select>
+          {isLoading ? (
+            <Spin />
+          ) : (
+            <Select
+              defaultValue={""}
+              onChange={(e) => setSelectedClubId(e)}
+              className="w-40"
+            >
+              <Select.Option value="">Tất cả đội bóng</Select.Option>
+              <Select.Option value={data?.homeClubId}>
+                {data?.homeClub?.name}
+              </Select.Option>
+              <Select.Option value={data?.awayClubId}>
+                {data?.awayClub?.name}
+              </Select.Option>
+            </Select>
+          )}
           <Select
             defaultValue={""}
             onChange={(e) => setSelectedEventType(e)}
@@ -131,7 +135,11 @@ export default function MatchEvents() {
           Thêm sự kiện
         </Button>
       </div>
-      <Table<IEvent> columns={columns} dataSource={data?.events} />
+      <Table<IEvent>
+        rowKey={"id"}
+        columns={columns}
+        dataSource={data?.events}
+      />
 
       {!isLoading && data && (
         <AddEvent

@@ -173,7 +173,7 @@ const MatchList: React.FC = () => {
             <Select.Option value="">Tất cả</Select.Option>
             <Select.Option value="SCHEDULED">Đã lên lịch</Select.Option>
             <Select.Option value="ONGOING">Đang diễn ra</Select.Option>
-            <Select.Option value="COMPLETED">Đã kết thúc</Select.Option>
+            <Select.Option value="COMPLETED">Đã thi đấu</Select.Option>
           </Select>
         </div>
         <Button

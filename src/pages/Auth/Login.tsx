@@ -6,7 +6,7 @@ const { useToken } = theme;
 const { useBreakpoint } = Grid;
 const { Text, Title, Link } = Typography;
 
-export default function App() {
+export default function Login() {
   const { token } = useToken();
   const screens = useBreakpoint();
 
