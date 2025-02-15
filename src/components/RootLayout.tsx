@@ -134,7 +134,6 @@ const RootLayout = () => {
 
   const accessToken = useSelector((state: RootState) => state.token);
   const navigate = useNavigate();
-  console.log("check token", accessToken);
   useEffect(() => {
     if (!accessToken) {
       navigate("/login");

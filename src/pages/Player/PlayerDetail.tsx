@@ -2,7 +2,14 @@ import fetcher from "@/api/fetcher";
 import { position } from "@/data/position";
 import { IClub } from "@/type/club";
 import { IPlayer } from "@/type/player";
-import { EditOutlined, UploadOutlined } from "@ant-design/icons";
+import { renderPositionText } from "@/utils/renderPositionText";
+import {
+  EditOutlined,
+  FacebookOutlined,
+  InstagramOutlined,
+  UploadOutlined,
+} from "@ant-design/icons";
+import { useQuery } from "@tanstack/react-query";
 import {
   Button,
   Card,
@@ -17,20 +24,20 @@ import {
 } from "antd";
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 
 export default function PlayerDetail() {
   const [isEdit, setIsEdit] = useState<boolean>(false);
-  const [player, setPlayer] = useState<IPlayer>();
   const { playerId } = useParams();
 
-  useEffect(() => {
-    fetcher.get(`players/${playerId}`).then((res) => {
-      setPlayer(res.data.data);
-      console.log(res.data.data);
-    });
-  }, []);
-
+  const { data: player, isLoading } = useQuery({
+    queryKey: ["GET_DETAILS_PLAYER"],
+    queryFn: () =>
+      fetcher.get(`players/${playerId}/stats`).then((res) => {
+        return res.data;
+      }),
+  });
+  console.log("check player", player);
   const [fileList, setFileList] = useState<FileType[]>([]);
   const [clubs, setClubs] = useState<IClub[]>([]);
   const navigation = useNavigate();
@@ -59,68 +66,337 @@ export default function PlayerDetail() {
     setFileList(newFileList);
   };
 
-  const handleSubmit = async (values: any) => {
-    const formData = new FormData();
-
-    const dateOfBirthISO = values.dateOfBirth
-      ? values.dateOfBirth.toISOString()
-      : "";
-
-    formData.append("name", values.name);
-    formData.append("dateOfBirth", dateOfBirthISO); // Use ISO format
-    formData.append("nationality", values.nationality);
-    formData.append("height", values.height);
-    formData.append("clubId", values.clubId);
-    formData.append("position", values.position);
-
-    if (fileList.length > 0) {
-      formData.append("image", fileList[0].originFileObj as Blob);
-    }
-    console.log(values);
-    try {
-      // const res = await fetcher.put("players", formData, {
-      //   headers: {
-      //     "Content-Type": "multipart/form-data",
-      //   },
-      // });
-
-      message.success("Cầu thủ đã được thêm thành công!");
-      navigation("/players");
-    } catch (error) {
-      message.error("Có lỗi xảy ra khi thêm cầu thủ!");
-      console.error(error);
-    }
-  };
-
   const [form] = Form.useForm();
 
-  useEffect(() => {
-    if (player) {
-      form.setFieldsValue({
-        nationality: player.nationality,
-        name: player.name,
-        height: player.height,
-        dateOfBirth: dayjs(player.dateOfBirth),
-        // dateOfBirth:
-        clubId: player.clubId,
-        position: player.position,
-      });
+  const cardData = [
+    {
+      label: "Số trận thi đấu",
+      value: player?.appearances,
+    },
+    {
+      label: "Số trận thắng",
+      value: player?.wins,
+    },
+    {
+      label: "Số trận thua",
+      value: player?.losses,
+    },
+    {
+      label: "Bàn thắng",
+      value: player?.goals,
+    },
+  ];
+  const attack = {
+    "Bàn thắng": player?.goals,
+    "Bàn thắng mỗi trận": player?.goalPerMatch,
+    "Số lần dứt điểm": player?.shots,
+    "Dứt điểm trúng đích": player?.shotsOnTarget,
+    "Dứt điểm chính xác": `${player?.shootingAccuracy}%`,
+    "Bàn thắng penalty": 86,
+    "Cơ hội tạo ra": player?.keyPass,
+    "Bóng chạm khung thành": 30,
+  };
+  const teamPlay = {
+    "Số đường chuyền": 377,
+    "Đường chuyền mỗi trận": 39,
+    "Chuyền chính xác": "84%",
+    "Số lần tạt bóng": 127,
+    "Tạt bóng chính xác": "21%",
+  };
+  const defence = {
+    "Số trận sạch lưới": player?.cleanSheets,
+    "Số bàn thua": player?.cleanSheets,
+    "Bàn thua mỗi trận": 0.99,
+    "Cứu thua": 174,
+    "Tắc bóng": 1318,
+    "Tắc bóng thành công": "70%",
+    "Cản phá cú sút": 287,
+    "Truy cản": 287,
+    "Phá bóng": 178,
+    "Phá bóng bằng đầu": 67,
+    "Tranh chấp tay đôi": 413,
+    "Phạm lỗi dẫn đén bàn thua": 19,
+    "Phản lưới": 0,
+  };
+  const discipline = {
+    "Thẻ vàng": player?.yellowCard,
+    "Thẻ đỏ": player?.redCard,
+    "Phạm lỗi": 247,
+    "Việt vị": 159,
+  };
+
+  function formatBirthDate(dateString: any): string {
+    const now = new Date();
+    const date = new Date(dateString);
+    const birthYear = date?.getFullYear();
+    const birthMonth = date?.getMonth();
+    const birthDay = date?.getDate();
+
+    let age = now.getFullYear() - (birthYear ?? 0);
+    if (
+      birthMonth !== undefined &&
+      birthDay !== undefined &&
+      (now.getMonth() < birthMonth ||
+        (now.getMonth() === birthMonth && now.getDate() < birthDay))
+    ) {
+      age--;
     }
-  }, [player, form]);
+
+    const formattedDate = date?.toLocaleDateString("vi-VN", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    });
+
+    return `${formattedDate} (${age})`;
+  }
   return (
     <div style={{ padding: "24px" }}>
-      <Card
-        title={
-          <div className="flex items-center justify-between">
-            <span>Thông tin cầu thủ</span>
-            <Button type="primary" onClick={() => setIsEdit(true)}>
-              <EditOutlined />
-            </Button>
+      <Card title={"Thông tin cầu thủ"} bordered={false}>
+        <div className="container m-auto grid grid-cols-4 h-fit pb-10 ">
+          <div className="col-span-4 flex   items-center   ">
+            <div className="w-[150px] h-[150px] md:w-[230px] md:h-[230px]   shadow-xl rounded-lg overflow-hidden    ">
+              {
+                <img
+                  className="w-full h-full object-cover"
+                  src={player?.imageURL}
+                  alt=""
+                />
+              }
+            </div>
+            <div className="flex-1 flex flex-col  pl-6  ">
+              <div className="flex flex-1 h-[230px] justify-between items-center   ">
+                <div className="flex flex-col gap-5">
+                  <div className="flex gap-3 items-end">
+                    <p className=" text-3xl md:text-5xl  ">{player?.name}</p>
+                    <span className="text-lg font-semibold">
+                      {"(" + renderPositionText(player?.position) + ")"}
+                    </span>
+                  </div>
+                  <div className="flex gap-3 items-center">
+                    <p className=" text-3xl md:text-xl  ">
+                      {player?.club.name}
+                    </p>
+                    <div className="w-10 h-10 rounded-full overflow-hidden shadow-md">
+                      <img
+                        src={player?.club?.logoURL}
+                        alt="avatar"
+                        className="object-cover w-full h-full rounded-full"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <p className="text-[135px] md:text-[180px] leading-[180px] font-bold">
+                  {player?.shirtNumber}
+                </p>
+              </div>
+            </div>
           </div>
-        }
-        bordered={false}
-      >
-        <Form
+          <div className="mt-5 col-span-4">
+            <div className="rounded-md border grid grid-cols-3 border-slate-200 py-7  px-4">
+              <div className=" col-span-1 pr-8 flex justify-between border border-y-0 border-l-0 border-r-slate-200">
+                <span className="text-sm font-light">Quốc tịch</span>
+                <span className="text-md font-semibold">
+                  {player?.nationality}
+                </span>
+              </div>
+              <div className=" col-span-1 px-8 flex justify-between border border-y-0 border-l-0 border-r-slate-200">
+                <span className="text-sm font-light">Ngày sinh</span>
+                <span className="text-md font-semibold">
+                  {formatBirthDate(player?.dateOfBirth)}
+                </span>
+              </div>
+              <div className=" col-span-1 pl-8 flex justify-between border border-y-0 border-l-0 border-r-slate-200">
+                <span className="text-sm font-light">Chiều cao</span>
+                <span className="text-md font-semibold">
+                  {player?.height + "cm"}
+                </span>
+              </div>
+            </div>
+          </div>
+          <div className="col-span-4 flex flex-wrap  items-start   ">
+            {/* Left content  */}
+            <div className="w-full   lg:w-[330px] h-fit  relative ">
+              <div className="block rounded-md border mt-7 py-2 text-primary">
+                <div className="border border-x-0 border-t-0 border-b-slate-200 px-4 py-2.5 flex items-center justify-between">
+                  <span className="text-md font-light">Câu lạc bộ</span>
+                  <span className="text-md font-semibold">
+                    {player?.club?.name}
+                  </span>
+                </div>
+                <div className=" px-4 py-2.5 flex items-center justify-between">
+                  <span className="text-md font-light">Vị trí</span>
+                  <span className="text-md font-semibold">
+                    {renderPositionText(player?.position)}
+                  </span>
+                </div>
+
+                <div className=" px-4 py-2.5 flex flex-col gap-2 items-start justify-between">
+                  <span className="text-md font-light">
+                    Theo dõi
+                    <span className="text-md ml-2">{player?.name + " "}</span>
+                  </span>
+                  <div className="flex items-center gap-3 ">
+                    <Link
+                      className="text-gray-700 hover:text-primary p-1.5 border rounded flex items-center justify-center"
+                      to={player?.instagram}
+                    >
+                      <InstagramOutlined className="text-2xl" />
+                    </Link>
+                    <Link
+                      className="text-gray-700 hover:text-primary p-1.5 border rounded flex items-center justify-center"
+                      to={player?.facebook}
+                    >
+                      <FacebookOutlined className="text-2xl" />
+                    </Link>
+                  </div>
+                </div>
+
+                {/* League record  */}
+                <p className="text-xl font-bold px-2 ">Thông số giải đấu</p>
+                <div className=" px-4 py-2.5 flex items-center justify-between">
+                  <span className="text-md font-light">Ra sân</span>
+                  <span className="text-md font-semibold">
+                    {player?.appearances}
+                  </span>
+                </div>
+                <div className=" px-4 py-2.5 flex items-center justify-between">
+                  <span className="text-md font-light">Bàn thắng</span>
+                  <span className="text-md font-semibold">{player?.goals}</span>
+                </div>
+                <div className=" px-4 py-2.5 flex items-center justify-between">
+                  <span className="text-md font-light">Kiến tạo</span>
+                  <span className="text-md font-semibold">
+                    {player?.assists}
+                  </span>
+                </div>
+                <div className=" px-4 py-2.5 flex items-center justify-between">
+                  <span className="text-md font-light">Giữ sạch lưới</span>
+                  <span className="text-md font-semibold">
+                    {player?.cleanSheets}
+                  </span>
+                </div>
+
+                {/* Awards  */}
+                <p className="text-xl font-bold px-2 mt-3">
+                  Giải thương và vinh danh
+                </p>
+                <div className=" px-4 py-2.5 flex items-center justify-between">
+                  <span className="text-md font-light">Quả bóng vàng</span>
+                  <span className="text-md font-semibold">{2024}</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex-1 px-2 md:px-0 flex flex-col col-span-8 mt-5 lg:pl-6 p-0 min-h-[230px] ">
+              <div className="grid grid-cols-8 gap-3 mt-2">
+                {cardData.map((item, index) => {
+                  return (
+                    <div
+                      key={index}
+                      className="p-4 col-span-4 md:col-span-2 rounded-md bg-[#fffffd] border"
+                    >
+                      <p className="text-md font-light mb-3.5 text-primary">
+                        {item.label}
+                      </p>
+                      <p className="md:text-5xl text-4xl font-bold text-primary">
+                        {" "}
+                        {item?.value?.toLocaleString("en-US")}
+                      </p>
+                    </div>
+                  );
+                })}
+              </div>
+
+              <div className="grid grid-cols-4 gap-2.5 mt-6">
+                <div className="col-span-4 md:col-span-2 text-primary">
+                  <div className="rounded-md border  border-x-slate-100 bg-[#fffffd] border-b-slate-100 border-t-4 border-t-green-500">
+                    <p className="text-xl font-bold px-2 py-3.5 border-b">
+                      Tấn công
+                    </p>
+                    {Object.entries(attack).map(([key, value], index) => (
+                      <div
+                        key={index}
+                        className=" border-b-slate-200 flex justify-between px-2 py-2.5"
+                      >
+                        <span className="text-md font-light">{key}</span>
+                        <span className="text-md font-bold">
+                          {" "}
+                          {typeof value === "number"
+                            ? value.toLocaleString("en-US")
+                            : value}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="col-span-4 md:col-span-2 text-primary">
+                  <div className="rounded-md border  border-x-slate-100 bg-[#fffffd] border-b-slate-100 border-t-4 border-t-green-500 text-primary">
+                    <p className="text-xl font-bold px-2 py-3.5 border-b">
+                      Phối hợp
+                    </p>
+                    {Object.entries(teamPlay).map(([key, value], index) => (
+                      <div
+                        key={index}
+                        className="border-b-slate-200 flex justify-between px-2 py-2.5"
+                      >
+                        <span className="text-md font-light">{key}</span>
+                        <span className="text-md font-bold">
+                          {typeof value === "number"
+                            ? value.toLocaleString("en-US")
+                            : value}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <div className="col-span-2">
+                  <div className="rounded-md border  border-x-slate-100 bg-[#fffffd] border-b-slate-100 border-t-4 border-t-green-500 text-primary">
+                    <p className="text-xl font-bold px-2 py-3.5 border-b">
+                      Phòng thủ
+                    </p>
+                    {Object.entries(defence).map(([key, value], index) => (
+                      <div
+                        key={index}
+                        className="border-b-slate-200 flex justify-between px-2 py-2.5"
+                      >
+                        <span className="text-md font-light">{key}</span>
+                        <span className="text-md font-bold">
+                          {typeof value === "number"
+                            ? value.toLocaleString("en-US")
+                            : value}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <div className="col-span-4 md:col-span-2 text-primary">
+                  <div className="rounded-md border  border-x-slate-100 bg-[#fffffd] border-b-slate-100 border-t-4 border-t-green-500 text-primary">
+                    <p className="text-xl font-bold px-2 py-3.5 border-b">
+                      Phạm lỗi
+                    </p>
+                    {Object.entries(discipline).map(([key, value], index) => (
+                      <div
+                        key={index}
+                        className="border-b-slate-200 flex justify-between px-2 py-2.5"
+                      >
+                        <span className="text-md font-light">{key}</span>
+                        <span className="text-md font-bold">
+                          {typeof value === "number"
+                            ? value.toLocaleString("en-US")
+                            : value}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        {/* <Form
           initialValues={{
             nationality: player?.nationality,
             name: player?.name,
@@ -128,44 +404,16 @@ export default function PlayerDetail() {
           form={form}
           name="basic"
           layout="vertical"
-          onFinish={handleSubmit}
         >
           <Row gutter={[24, 14]}>
             <Col span={6}>
-              {isEdit ? (
-                <Form.Item label="Hình ảnh" name="image">
-                  <Upload
-                    className="w-[200px] h-[200px] rounded-md overflow-hidden"
-                    listType="picture-card"
-                    fileList={fileList}
-                    onChange={handleChange}
-                    beforeUpload={() => false}
-                  >
-                    {isUploadImg ? (
-                      <div className="absolute inset-0 z-20">
-                        <UploadOutlined />
-                        {/* <div style={{ marginTop: 8 }}>Upload</div> */}
-                      </div>
-                    ) : (
-                      <img
-                        onMouseEnter={() => setIsUploadImg(true)}
-                        onMouseLeave={() => setIsUploadImg(false)}
-                        src={player?.imageURL}
-                        alt="playerAvt"
-                        className="object-cover"
-                      />
-                    )}
-                  </Upload>
-                </Form.Item>
-              ) : (
-                <div className="w-[200px] h-[200px] rounded-md overflow-hidden">
-                  <img
-                    src={player?.imageURL}
-                    alt="playerAvt"
-                    className="object-cover"
-                  />
-                </div>
-              )}
+              <div className="w-[200px] h-[200px] rounded-md overflow-hidden">
+                <img
+                  src={player?.imageURL}
+                  alt="playerAvt"
+                  className="object-cover"
+                />
+              </div>
             </Col>
             <Col span={18}>
               <Form.Item
@@ -231,16 +479,9 @@ export default function PlayerDetail() {
                   ))}
                 </Select>
               </Form.Item>
-              {isEdit && (
-                <Form.Item>
-                  <Button type="primary" htmlType="submit">
-                    Cập nhật cầu thủ
-                  </Button>
-                </Form.Item>
-              )}
             </Col>
           </Row>
-        </Form>
+        </Form> */}
       </Card>
     </div>
   );
