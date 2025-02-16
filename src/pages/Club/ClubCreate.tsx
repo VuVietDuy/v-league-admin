@@ -16,7 +16,6 @@ interface Club {
   stadiumCapacity: string;
   stadiumAddress: string;
   stadiumMap: string;
-  stadiumImage: File | null;
   logo: File | null;
 }
 
@@ -52,6 +51,7 @@ const ClubCreate: React.FC = () => {
         setLoading(false);
       })
       .catch((err) => {
+        setLoading(false);
         console.log(err);
       });
   };
@@ -187,27 +187,7 @@ const ClubCreate: React.FC = () => {
               </Col>
             </Row>
           </Col>
-          <Form.Item
-            label="HÌnh ảnh SVĐ"
-            name="logo"
-            valuePropName="fileList"
-            getValueFromEvent={normFile}
-            rules={[{ required: true, message: "Vui lòng tải lên logo!" }]}
-          >
-            <Upload
-              listType="picture-card"
-              fileList={fileList}
-              onChange={handleChange}
-              beforeUpload={() => false}
-            >
-              {fileList.length >= 1 ? null : (
-                <div>
-                  <UploadOutlined />
-                  <div style={{ marginTop: 8 }}>Upload</div>
-                </div>
-              )}
-            </Upload>
-          </Form.Item>
+
           <Form.Item label="Địa chỉ SVĐ" name="stadiumAddress">
             <Input />
           </Form.Item>
