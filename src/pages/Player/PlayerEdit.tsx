@@ -9,6 +9,7 @@ import {
   Upload,
   Button,
   message,
+  Image,
 } from "antd";
 import { useEffect, useState } from "react";
 import { UploadOutlined } from "@ant-design/icons";
@@ -65,6 +66,7 @@ function PlayerEdit() {
         height: player.height,
         weight: player.weight,
         clubId: player.clubId,
+        shirtNumber: player.shirtNumber,
         position: renderPositionText(player.position),
       });
       setFileList([
@@ -104,6 +106,7 @@ function PlayerEdit() {
     formData.append("nationality", values.nationality);
     formData.append("height", values.height);
     formData.append("weight", values.weight);
+    formData.append("shirtNumber", values.shirtNumber);
     formData.append("clubId", values.clubId);
     formData.append("position", values.position);
 
@@ -134,11 +137,12 @@ function PlayerEdit() {
           <Row gutter={[24, 14]}>
             <Col span={6}>
               <div className="w-[230px] h-[230px] rounded-md shadow-md overflow-hidden">
-                <img
+                {/* <img
                   className="h-full w-full object-cover"
                   src={player?.imageURL}
                   alt="avatar"
-                />
+                /> */}
+                <Image src={player?.imageURL}></Image>
               </div>
             </Col>
             <Col span={18}>
@@ -169,16 +173,29 @@ function PlayerEdit() {
               </Form.Item>
               <Row gutter={[24, 24]}>
                 <Col span={12}>
-                  <Form.Item label="Chiều cao (cm)" name="height">
+                  <Form.Item
+                    label="Chiều cao (cm)"
+                    name="height"
+                    rules={[
+                      { required: true, message: "Vui lòng nhập chiều cao!" },
+                    ]}
+                  >
                     <Input placeholder="Chiều cao" />
                   </Form.Item>
                 </Col>
                 <Col span={12}>
-                  <Form.Item label="Cân nặng (kg)" name="weight">
+                  <Form.Item
+                    label="Cân nặng (kg)"
+                    name="weight"
+                    rules={[
+                      { required: true, message: "Vui lòng nhập cân nặng" },
+                    ]}
+                  >
                     <Input placeholder="Cân nặng" />
                   </Form.Item>
                 </Col>
               </Row>
+
               <Form.Item
                 label="Câu lạc bộ"
                 name="clubId"
@@ -193,6 +210,13 @@ function PlayerEdit() {
                     </Select.Option>
                   ))}
                 </Select>
+              </Form.Item>
+              <Form.Item
+                label="Số áo"
+                name="shirtNumber"
+                rules={[{ required: true, message: "Vui lòng nhập số áo!" }]}
+              >
+                <Input placeholder="Số áo" />
               </Form.Item>
               <Form.Item
                 label="Vị trí"

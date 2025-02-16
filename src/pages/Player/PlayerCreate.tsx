@@ -80,6 +80,7 @@ function PlayerCreate() {
     formData.append("height", values.height);
     formData.append("weight", values.weight);
     formData.append("clubId", values.clubId);
+    formData.append("shirtNumber", values.shirtNumber);
     formData.append("position", values.position);
 
     if (fileList.length > 0) {
@@ -175,6 +176,13 @@ function PlayerCreate() {
                     </Select.Option>
                   ))}
                 </Select>
+              </Form.Item>
+              <Form.Item
+                label="Số áo"
+                name="shirtNumber"
+                rules={[{ required: true, message: "Vui lòng nhập số áo!" }]}
+              >
+                <Input placeholder="Số áo" />
               </Form.Item>
               <Form.Item
                 label="Vị trí"
