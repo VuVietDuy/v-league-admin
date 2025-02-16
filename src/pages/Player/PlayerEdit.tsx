@@ -63,6 +63,7 @@ function PlayerEdit() {
         dateOfBirth: dayjs(player.dateOfBirth),
         nationality: player.nationality,
         height: player.height,
+        weight: player.weight,
         clubId: player.clubId,
         position: renderPositionText(player.position),
       });
@@ -102,6 +103,7 @@ function PlayerEdit() {
     formData.append("dateOfBirth", dateOfBirthISO); // Use ISO format
     formData.append("nationality", values.nationality);
     formData.append("height", values.height);
+    formData.append("weight", values.weight);
     formData.append("clubId", values.clubId);
     formData.append("position", values.position);
 
@@ -165,15 +167,18 @@ function PlayerEdit() {
               >
                 <Input />
               </Form.Item>
-              <Form.Item
-                label="Chiều cao (cm)"
-                name="height"
-                rules={[
-                  { required: true, message: "Vui lòng nhập chiều cao!" },
-                ]}
-              >
-                <Input />
-              </Form.Item>
+              <Row gutter={[24, 24]}>
+                <Col span={12}>
+                  <Form.Item label="Chiều cao (cm)" name="height">
+                    <Input placeholder="Chiều cao" />
+                  </Form.Item>
+                </Col>
+                <Col span={12}>
+                  <Form.Item label="Cân nặng (kg)" name="weight">
+                    <Input placeholder="Cân nặng" />
+                  </Form.Item>
+                </Col>
+              </Row>
               <Form.Item
                 label="Câu lạc bộ"
                 name="clubId"
