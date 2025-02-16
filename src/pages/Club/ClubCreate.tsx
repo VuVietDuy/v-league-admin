@@ -181,7 +181,7 @@ const ClubCreate: React.FC = () => {
                 </Form.Item>
               </Col>
               <Col span={12}>
-                <Form.Item label="Sức chứa" name="stadiumCapacity">
+                <Form.Item label="Sức chứa SVĐ" name="stadiumCapacity">
                   <Input />
                 </Form.Item>
               </Col>
@@ -212,10 +212,10 @@ const ClubCreate: React.FC = () => {
             <Input />
           </Form.Item>
 
-          <Form.Item label="stadiumMap" name="Bản đồ SVĐ">
+          <Form.Item label="Bản đồ SVĐ" name="stadiumMap">
             <Input />
           </Form.Item>
-          <Form.Item label="Mô tả sân vận động" name="stadiumDescription">
+          <Form.Item label="Mô tả SVĐ" name="stadiumDescription">
             <TextArea rows={6} />
           </Form.Item>
         </Card>
