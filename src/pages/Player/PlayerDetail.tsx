@@ -1,33 +1,12 @@
 import fetcher from "@/api/fetcher";
-import { position } from "@/data/position";
-import { IClub } from "@/type/club";
-import { IPlayer } from "@/type/player";
+import Loading from "@/components/Loading";
 import { renderPositionText } from "@/utils/renderPositionText";
-import {
-  EditOutlined,
-  FacebookOutlined,
-  InstagramOutlined,
-  UploadOutlined,
-} from "@ant-design/icons";
+import { FacebookOutlined, InstagramOutlined } from "@ant-design/icons";
 import { useQuery } from "@tanstack/react-query";
-import {
-  Button,
-  Card,
-  Col,
-  DatePicker,
-  Form,
-  Input,
-  message,
-  Row,
-  Select,
-  Upload,
-} from "antd";
-import dayjs from "dayjs";
-import { useEffect, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Card } from "antd";
+import { Link, useParams } from "react-router-dom";
 
 export default function PlayerDetail() {
-  const [isEdit, setIsEdit] = useState<boolean>(false);
   const { playerId } = useParams();
 
   const { data: player, isLoading } = useQuery({
@@ -37,36 +16,6 @@ export default function PlayerDetail() {
         return res.data;
       }),
   });
-  console.log("check player", player);
-  const [fileList, setFileList] = useState<FileType[]>([]);
-  const [clubs, setClubs] = useState<IClub[]>([]);
-  const navigation = useNavigate();
-  const [isUploadImg, setIsUploadImg] = useState<boolean>([]);
-  console.log(playerId);
-
-  useEffect(() => {
-    const getClubs = async () => {
-      await fetcher
-        .get("clubs")
-        .then((res) => {
-          setClubs(res.data);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    };
-    getClubs();
-  }, []);
-
-  const handleChange = ({
-    fileList: newFileList,
-  }: {
-    fileList: FileType[];
-  }) => {
-    setFileList(newFileList);
-  };
-
-  const [form] = Form.useForm();
 
   const cardData = [
     {
@@ -149,6 +98,9 @@ export default function PlayerDetail() {
     });
 
     return `${formattedDate} (${age})`;
+  }
+  if (isLoading) {
+    return <Loading />;
   }
   return (
     <div style={{ padding: "24px" }}>

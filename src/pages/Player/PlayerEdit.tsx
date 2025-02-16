@@ -6,46 +6,38 @@ import {
   Input,
   Row,
   Select,
-  Upload,
   Button,
   message,
   Image,
+  Spin,
 } from "antd";
-import { useEffect, useState } from "react";
-import { UploadOutlined } from "@ant-design/icons";
-import { UploadFile } from "antd/lib";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { IClub } from "@/type/club";
 import fetcher from "@/api/fetcher";
 import { useQuery } from "@tanstack/react-query";
 import dayjs from "dayjs";
-import { renderPositionText } from "@/utils/renderPositionText";
-
-interface FileType extends UploadFile {}
+import Loading from "@/components/Loading";
 
 const position = [
   {
-    key: "Goalkeeper",
+    value: "GOALKEEPER",
     name: "Thủ môn",
   },
   {
-    key: "Defender",
+    value: "DEFENDER",
     name: "Hậu vệ",
   },
   {
-    key: "Midfielder",
+    value: "MIDFIELDER",
     name: "Tiền vệ",
   },
   {
-    key: "Forward",
+    value: "FORWARD",
     name: "Tiền đạo",
   },
 ];
 
 function PlayerEdit() {
-  const [fileList, setFileList] = useState<FileType[]>([]);
-  const [clubs, setClubs] = useState<IClub[]>([]);
-  const navigation = useNavigate();
   const { playerId } = useParams();
   const { data: player, isLoading } = useQuery({
     queryKey: ["GET_DETAILS_PLAYER"],
@@ -54,71 +46,48 @@ function PlayerEdit() {
         return res.data.data;
       }),
   });
-  console.log("check player", player);
 
-  const [form] = Form.useForm();
-  useEffect(() => {
-    if (player) {
-      form.setFieldsValue({
-        name: player.name,
-        dateOfBirth: dayjs(player.dateOfBirth),
-        nationality: player.nationality,
-        height: player.height,
-        weight: player.weight,
-        clubId: player.clubId,
-        shirtNumber: player.shirtNumber,
-        position: renderPositionText(player.position),
-      });
-      setFileList([
-        {
-          uid: player.id,
-          name: player.avatar,
-          status: "done",
-          url: player.avatar,
-        },
-      ]);
-    }
-  }, [player]);
+  const { data: clubs, isLoading: isLoadingClubs } = useQuery({
+    queryKey: ["GET_LIST_CLUBS_FOR_PLAYER_EDIT"],
+    queryFn: () => fetcher.get("clubs").then((res) => res.data),
+  });
 
-  useEffect(() => {
-    const getClubs = async () => {
-      await fetcher
-        .get("clubs")
-        .then((res) => {
-          setClubs(res.data);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    };
-    getClubs();
-  }, []);
+  if (isLoading) {
+    return <Loading />;
+  }
+
+  const initialValues = {
+    name: player.name,
+    dateOfBirth: dayjs(player.dateOfBirth),
+    nationality: player.nationality,
+    height: player.height,
+    weight: player.weight,
+    clubId: player.clubId,
+    shirtNumber: player.shirtNumber,
+    position: player.position,
+  };
 
   const handleSubmit = async (values: any) => {
-    const formData = new FormData();
-
     const dateOfBirthISO = values.dateOfBirth
       ? values.dateOfBirth.toISOString()
       : "";
 
-    formData.append("name", values.name);
-    formData.append("dateOfBirth", dateOfBirthISO); // Use ISO format
-    formData.append("nationality", values.nationality);
-    formData.append("height", values.height);
-    formData.append("weight", values.weight);
-    formData.append("shirtNumber", values.shirtNumber);
-    formData.append("clubId", values.clubId);
-    formData.append("position", values.position);
+    const body = {
+      name: values.name,
+      dateOfBirth: dateOfBirthISO,
+      nationality: values.nationality,
+      height: parseInt(values.height),
+      weight: parseInt(values.weight),
+      shirtNumber: parseInt(values.shirtNumber),
+      clubId: parseInt(values.clubId),
+      position: values.position,
+    };
 
     try {
-      const res = await fetcher.put(`players/${playerId}`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      await fetcher.put(`players/${playerId}`, body);
 
       message.success("Cầu thủ đã được chỉnh sửa thành công!");
-      navigation("/players");
+      // navigation("/players");
     } catch (error) {
       message.error("Có lỗi xảy ra khi chỉnh sửa cầu thủ!");
       console.error(error);
@@ -129,20 +98,19 @@ function PlayerEdit() {
     <div style={{ padding: "24px" }}>
       <Card title="Thông tin cầu thủ" bordered={false}>
         <Form
-          form={form}
+          initialValues={initialValues}
           name="basic"
           layout="vertical"
           onFinish={handleSubmit}
         >
           <Row gutter={[24, 14]}>
             <Col span={6}>
-              <div className="w-[230px] h-[230px] rounded-md shadow-md overflow-hidden">
-                {/* <img
-                  className="h-full w-full object-cover"
+              <label className="block mb-2">Hình ảnh</label>
+              <div className="border rounded-lg shadow-md overflow-hidden">
+                <Image
+                  className="w-full h-full object-cover"
                   src={player?.imageURL}
-                  alt="avatar"
-                /> */}
-                <Image src={player?.imageURL}></Image>
+                ></Image>
               </div>
             </Col>
             <Col span={18}>
@@ -180,7 +148,7 @@ function PlayerEdit() {
                       { required: true, message: "Vui lòng nhập chiều cao!" },
                     ]}
                   >
-                    <Input placeholder="Chiều cao" />
+                    <Input type="number" placeholder="Chiều cao" />
                   </Form.Item>
                 </Col>
                 <Col span={12}>
@@ -191,7 +159,7 @@ function PlayerEdit() {
                       { required: true, message: "Vui lòng nhập cân nặng" },
                     ]}
                   >
-                    <Input placeholder="Cân nặng" />
+                    <Input type="number" placeholder="Cân nặng" />
                   </Form.Item>
                 </Col>
               </Row>
@@ -203,13 +171,17 @@ function PlayerEdit() {
                   { required: true, message: "Vui lòng chọn câu lạc bộ!" },
                 ]}
               >
-                <Select>
-                  {clubs.map((item) => (
-                    <Select.Option key={item.id} value={item.id}>
-                      {item.name}
-                    </Select.Option>
-                  ))}
-                </Select>
+                {isLoadingClubs ? (
+                  <Spin />
+                ) : (
+                  <Select>
+                    {clubs.map((item: IClub) => (
+                      <Select.Option key={item.id} value={item.id}>
+                        {item.name}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                )}
               </Form.Item>
               <Form.Item
                 label="Số áo"
@@ -225,7 +197,7 @@ function PlayerEdit() {
               >
                 <Select>
                   {position.map((item) => (
-                    <Select.Option key={item.key} value={item.key}>
+                    <Select.Option key={item.value} value={item.value}>
                       {item.name}
                     </Select.Option>
                   ))}
