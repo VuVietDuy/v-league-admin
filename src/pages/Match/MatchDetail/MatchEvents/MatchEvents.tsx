@@ -10,16 +10,20 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 import {
   DeleteOutlined,
+  EditOutlined,
   ExclamationCircleOutlined,
   PlusOutlined,
 } from "@ant-design/icons";
 import { renderEventTypeText } from "@/utils/renderEventTypeText";
+import EditEvent from "./EditEvent";
 
 export default function MatchEvents() {
   const { matchId } = useParams();
   const [openModalAddEvent, setOpenModalAddEvent] = useState<boolean>(false);
+  const [openModalEditEvent, setOpenModalEditEvent] = useState<boolean>(false);
   const [selectedClubId, setSelectedClubId] = useState<string>("");
   const [selectedEventType, setSelectedEventType] = useState<string>("");
+  const [editEvent, setEditEvent] = useState<IEvent>(null);
 
   const { data, refetch, isLoading } = useQuery<IMatch>({
     queryKey: [queryKeys.GET_MATCH_EVENTS],
@@ -84,14 +88,26 @@ export default function MatchEvents() {
       title: "",
       key: "action",
       render: (_, record) => (
-        <Button
-          danger
-          size="middle"
-          onClick={() => confirmDelete(record.id)}
-          loading={deleteEvent.isPending}
-        >
-          <DeleteOutlined />
-        </Button>
+        <div className="flex gap-2 items-center">
+          <Button
+            danger
+            size="middle"
+            onClick={() => confirmDelete(record.id)}
+            loading={deleteEvent.isPending}
+          >
+            <DeleteOutlined />
+          </Button>
+          <Button
+            className="border-yellow-500  hover:border-yellow-300 hover:text-yellow-300 text-yellow-500"
+            size="middle"
+            onClick={() => {
+              setEditEvent(record);
+              setOpenModalEditEvent(true);
+            }}
+          >
+            <EditOutlined />
+          </Button>
+        </div>
       ),
     },
   ];
@@ -117,6 +133,10 @@ export default function MatchEvents() {
       cancelText: "Hủy",
       onOk: () => deleteEvent.mutate(eventId),
     });
+  };
+  const onCancelEdit = () => {
+    setOpenModalEditEvent(false);
+    setEditEvent(null);
   };
   return (
     <div className="mt-4">
@@ -180,6 +200,16 @@ export default function MatchEvents() {
           awayClub={data?.awayClub}
           open={openModalAddEvent}
           onCancel={onCancel}
+        />
+      )}
+      {openModalEditEvent && (
+        <EditEvent
+          refetch={refetch}
+          editEvent={editEvent}
+          homeClub={data?.homeClub}
+          awayClub={data?.awayClub}
+          open={openModalEditEvent}
+          onCancel={onCancelEdit}
         />
       )}
     </div>

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Table, Button, Space, Popconfirm, Select, message } from "antd";
 import { ColumnsType } from "antd/lib/table";
-import { DeleteOutlined, EyeFilled } from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined, EyeFilled } from "@ant-design/icons";
 import { Link, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import fetcher from "@/api/fetcher";
