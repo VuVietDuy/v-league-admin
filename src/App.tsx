@@ -1,6 +1,8 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Provider } from "react-redux";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { PersistGate } from "redux-persist/integration/react";
+
 import { persistor, store } from "@/store/store";
 import RootLayout from "@/components/RootLayout";
 import UserList from "@/pages/User/UserList";
@@ -22,8 +24,8 @@ import MatchList from "@/pages/Match/MatchList";
 import MatchDetail from "@/pages/Match/MatchDetail/MatchDetail";
 import SeasonClubs from "@/pages/Season/SeasonClubs/SeasonClubs";
 import Login from "./pages/Auth/Login";
-import { PersistGate } from "redux-persist/integration/react";
 import PlayerEdit from "./pages/Player/PlayerEdit";
+import NewsDetail from "./pages/News/NewsDetail";
 
 const queryClient = new QueryClient();
 
@@ -72,6 +74,7 @@ function App() {
                 <Route path="/clubs/:clubId/edit" element={<ClubEdit />} />
                 <Route path="/news" element={<NewsList />} />
                 <Route path="/news/new" element={<NewsCreate />} />
+                <Route path="/news/:newsId" element={<NewsDetail />} />
                 <Route path="/news/:newsId/edit" element={<NewsEdit />} />
               </Route>
             </Routes>

@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import { Form, Input, Button, Upload, Card, message, Row, Col } from "antd";
-import { UploadOutlined } from "@ant-design/icons";
-import { UploadFile } from "antd/lib";
+import { Form, Input, Button, Card, message, Row, Col } from "antd";
 import TextArea from "antd/es/input/TextArea";
-import { useNavigate } from "react-router-dom";
-import fetcher from "@/api/fetcher";
+import { useParams } from "react-router-dom";
+import fetcher from "../../api/fetcher";
+import { useQuery } from "@tanstack/react-query";
+import Loading from "@/components/Loading";
 
 interface Club {
   name: string;
@@ -16,65 +16,67 @@ interface Club {
   stadiumCapacity: string;
   stadiumAddress: string;
   stadiumMap: string;
-  stadiumImage: File | null;
-  logo: File | null;
 }
 
-interface FileType extends UploadFile {}
-
 const ClubEdit: React.FC = () => {
-  const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
-  const [fileList, setFileList] = useState<FileType[]>([]);
-  const navigate = useNavigate();
+  const { clubId } = useParams();
+
+  const { data: club, isLoading } = useQuery({
+    queryKey: ["GET_CLUB_PLAYER"],
+    queryFn: () =>
+      fetcher.get(`clubs/${clubId}`).then((res) => {
+        return res.data.data;
+      }),
+  });
+
+  if (isLoading) {
+    return <Loading />;
+  }
+
+  const initValues = {
+    name: club.name,
+    shortName: club.shortName,
+    foundedYear: club.foundedYear,
+    coach: club.coach,
+    stadium: club.stadium,
+    stadiumDescription: club.stadiumDescription,
+    stadiumCapacity: club.stadiumCapacity,
+    stadiumAddress: club.stadiumAddress,
+    stadiumMap: club.stadiumMap,
+  };
 
   const onFinish = (values: Club) => {
     setLoading(true);
-    const formData = new FormData();
-    formData.append("name", values.name);
-    formData.append("shortName", values.shortName);
-    formData.append("foundedYear", values.foundedYear);
-    formData.append("coach", values.coach);
-    formData.append("stadium", values.stadium);
-    formData.append("stadiumDescription", values.stadiumDescription);
-    formData.append("stadiumCapacity", values.stadiumCapacity);
-    formData.append("stadiumAddress", values.stadiumAddress);
-    formData.append("stadiumMap", values.stadiumMap);
+    const body = {
+      name: values.name,
+      shortName: values.shortName,
+      foundedYear: parseInt(values.foundedYear),
+      coach: values.coach,
+      stadium: values.stadium,
+      stadiumDescription: values.stadiumDescription,
+      stadiumCapacity: parseInt(values.stadiumCapacity),
+      stadiumAddress: values.stadiumAddress,
+      stadiumMap: values.stadiumMap,
+    };
+    console.log(body);
 
-    if (fileList.length > 0) {
-      formData.append("logo", fileList[0].originFileObj as File);
-    }
     fetcher
-      .post("clubs", formData)
+      .patch(`clubs/${club?.id} `, body)
       .then((res) => {
-        navigate("/clubs");
-        message.success("Câu lạc bộ đã được thêm thành công!");
+        message.success("Chỉnh sửa thông tin câu lạc bộ thành công!");
         setLoading(false);
       })
       .catch((err) => {
+        setLoading(false);
         console.log(err);
       });
-  };
-
-  const normFile = (e: any) => {
-    if (Array.isArray(e)) {
-      return e;
-    }
-    return e?.fileList;
-  };
-
-  const handleChange = ({
-    fileList: newFileList,
-  }: {
-    fileList: FileType[];
-  }) => {
-    setFileList(newFileList);
   };
 
   return (
     <div style={{ padding: "20px" }}>
       <Form
-        form={form}
+        initialValues={initValues}
         name="add-club-form"
         layout="vertical"
         onFinish={onFinish}
@@ -82,27 +84,13 @@ const ClubEdit: React.FC = () => {
         <Card>
           <Row gutter={[24, 14]}>
             <Col span={6}>
-              <Form.Item
-                label="Logo"
-                name="logo"
-                valuePropName="fileList"
-                getValueFromEvent={normFile}
-                rules={[{ required: true, message: "Vui lòng tải lên logo!" }]}
-              >
-                <Upload
-                  listType="picture-card"
-                  fileList={fileList}
-                  onChange={handleChange}
-                  beforeUpload={() => false}
-                >
-                  {fileList.length >= 1 ? null : (
-                    <div>
-                      <UploadOutlined />
-                      <div style={{ marginTop: 8 }}>Upload</div>
-                    </div>
-                  )}
-                </Upload>
-              </Form.Item>
+              <div className="w-full h-[230px] shadow-md overflow-hidden rounded-md">
+                <img
+                  src={club?.logoURL}
+                  alt="logo"
+                  className="object-contain w-full h-full"
+                />
+              </div>
             </Col>
             <Col span={18}>
               <Row gutter={[24, 14]}>
@@ -187,27 +175,7 @@ const ClubEdit: React.FC = () => {
               </Col>
             </Row>
           </Col>
-          {/* <Form.Item
-            label="HÌnh ảnh SVĐ"
-            name="logo"
-            valuePropName="fileList"
-            getValueFromEvent={normFile}
-            rules={[{ required: true, message: "Vui lòng tải lên logo!" }]}
-          >
-            <Upload
-              listType="picture-card"
-              fileList={fileList}
-              onChange={handleChange}
-              beforeUpload={() => false}
-            >
-              {fileList.length >= 1 ? null : (
-                <div>
-                  <UploadOutlined />
-                  <div style={{ marginTop: 8 }}>Upload</div>
-                </div>
-              )}
-            </Upload>
-          </Form.Item> */}
+
           <Form.Item label="Địa chỉ SVĐ" name="stadiumAddress">
             <Input />
           </Form.Item>
@@ -226,7 +194,7 @@ const ClubEdit: React.FC = () => {
             htmlType="submit"
             loading={loading}
           >
-            Thêm Câu Lạc Bộ
+            Cập nhật
           </Button>
         </Form.Item>
       </Form>

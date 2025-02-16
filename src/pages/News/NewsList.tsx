@@ -1,11 +1,18 @@
-import { Badge, Button, Card, Input, Space, Table, Tag } from "antd";
+import { Badge, Button, Card, Input, Modal, Space, Table, message } from "antd";
 import type { TableProps } from "antd";
-import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import {
+  DeleteOutlined,
+  EditOutlined,
+  EyeOutlined,
+  ExclamationCircleOutlined,
+} from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { INews } from "@/type/news";
 import fetcher from "@/api/fetcher";
 import { useQuery } from "@tanstack/react-query";
+
+const { confirm } = Modal;
 
 function NewsList() {
   const navigate = useNavigate();
@@ -25,42 +32,69 @@ function NewsList() {
     refetch();
   }, [key]);
 
-  
-const columns: TableProps<INews>["columns"] = [
-  {
-    title: "Ảnh bìa",
-    dataIndex: "thumbnail",
-    key: "thumbnail",
-    render: (text) => <img src={text} width={60}></img>,
-  },
-  {
-    title: "Tiêu đề",
-    dataIndex: "title",
-    key: "title",
-    render: (text) => <a>{text}</a>,
-  },
-  {
-    title: "Loại",
-    dataIndex: "tag",
-    key: "tag",
-    render: (text) => <Badge>{text}</Badge>,
-  },
-  {
-    title: "",
-    key: "action",
-    render: (_, record) => (
-      <Space size="middle">
-        <Button type="primary">
-          <EditOutlined />
-        </Button>
-        <Button type="primary" danger>
-          <DeleteOutlined />
-        </Button>
-      </Space>
-    ),
-  },
-];
+  // Hàm xử lý xóa tin tức
+  const handleDelete = (id: number) => {
+    confirm({
+      title: "Bạn có chắc chắn muốn xóa?",
+      icon: <ExclamationCircleOutlined />,
+      content: "Tin tức này sẽ bị xóa vĩnh viễn.",
+      okText: "Xóa",
+      okType: "danger",
+      cancelText: "Hủy",
+      onOk() {
+        fetcher
+          .delete(`news/${id}`)
+          .then(() => {
+            message.success("Xóa tin tức thành công!");
+            refetch(); // Cập nhật danh sách sau khi xóa
+          })
+          .catch(() => {
+            message.error("Xóa thất bại! Vui lòng thử lại.");
+          });
+      },
+    });
+  };
 
+  const columns: TableProps<INews>["columns"] = [
+    {
+      title: "Ảnh bìa",
+      dataIndex: "thumbnail",
+      key: "thumbnail",
+      render: (text) => <img src={text} width={60} />,
+    },
+    {
+      title: "Tiêu đề",
+      dataIndex: "title",
+      key: "title",
+      render: (text) => <a>{text}</a>,
+    },
+    {
+      title: "Loại",
+      dataIndex: "tag",
+      key: "tag",
+      render: (text) => <Badge>{text}</Badge>,
+    },
+    {
+      title: "",
+      key: "action",
+      render: (_, record) => (
+        <Space size="small">
+          <Button onClick={() => navigate(`/news/${record.id}`)}>
+            <EyeOutlined />
+          </Button>
+          <Button
+            onClick={() => navigate(`/news/${record.id}/edit`)}
+            type="primary"
+          >
+            <EditOutlined />
+          </Button>
+          <Button type="primary" danger onClick={() => handleDelete(record.id)}>
+            <DeleteOutlined />
+          </Button>
+        </Space>
+      ),
+    },
+  ];
 
   return (
     <Card className="m-6">
@@ -69,7 +103,7 @@ const columns: TableProps<INews>["columns"] = [
           <Input
             onChange={(e) => setKey(e.target.value)}
             placeholder="Tìm kiếm"
-          ></Input>
+          />
         </div>
         <Button onClick={() => navigate("new")} type="primary">
           Thêm tin tức

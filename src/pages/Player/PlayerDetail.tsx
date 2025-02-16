@@ -126,16 +126,16 @@ export default function PlayerDetail() {
                     </span>
                   </div>
                   <div className="flex gap-3 items-center">
-                    <p className=" text-3xl md:text-xl  ">
-                      {player?.club.name}
-                    </p>
                     <div className="w-10 h-10 rounded-full overflow-hidden shadow-md">
                       <img
                         src={player?.club?.logoURL}
                         alt="avatar"
-                        className="object-cover w-full h-full rounded-full"
+                        className="object-cover w-full h-full "
                       />
                     </div>
+                    <p className=" text-3xl md:text-xl  ">
+                      {player?.club.name}
+                    </p>
                   </div>
                 </div>
 

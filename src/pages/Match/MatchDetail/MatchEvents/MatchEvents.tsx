@@ -16,6 +16,7 @@ import {
 } from "@ant-design/icons";
 import { renderEventTypeText } from "@/utils/renderEventTypeText";
 import EditEvent from "./EditEvent";
+import Loading from "@/components/Loading";
 
 export default function MatchEvents() {
   const { matchId } = useParams();
@@ -23,7 +24,7 @@ export default function MatchEvents() {
   const [openModalEditEvent, setOpenModalEditEvent] = useState<boolean>(false);
   const [selectedClubId, setSelectedClubId] = useState<string>("");
   const [selectedEventType, setSelectedEventType] = useState<string>("");
-  const [editEvent, setEditEvent] = useState<IEvent>(null);
+  const [editEvent, setEditEvent] = useState<IEvent>();
 
   const { data, refetch, isLoading } = useQuery<IMatch>({
     queryKey: [queryKeys.GET_MATCH_EVENTS],
@@ -90,15 +91,7 @@ export default function MatchEvents() {
       render: (_, record) => (
         <div className="flex gap-2 items-center">
           <Button
-            danger
-            size="middle"
-            onClick={() => confirmDelete(record.id)}
-            loading={deleteEvent.isPending}
-          >
-            <DeleteOutlined />
-          </Button>
-          <Button
-            className="border-yellow-500  hover:border-yellow-300 hover:text-yellow-300 text-yellow-500"
+            type="primary"
             size="middle"
             onClick={() => {
               setEditEvent(record);
@@ -106,6 +99,14 @@ export default function MatchEvents() {
             }}
           >
             <EditOutlined />
+          </Button>
+          <Button
+            danger
+            size="middle"
+            onClick={() => confirmDelete(record.id)}
+            loading={deleteEvent.isPending}
+          >
+            <DeleteOutlined />
           </Button>
         </div>
       ),
@@ -136,8 +137,10 @@ export default function MatchEvents() {
   };
   const onCancelEdit = () => {
     setOpenModalEditEvent(false);
-    setEditEvent(null);
   };
+  if (isLoading) {
+    return <Loading />;
+  }
   return (
     <div className="mt-4">
       <div className="flex mb-4">
@@ -193,7 +196,7 @@ export default function MatchEvents() {
         dataSource={data?.events}
       />
 
-      {!isLoading && data && (
+      {
         <AddEvent
           refetch={refetch}
           homeClub={data?.homeClub}
@@ -201,7 +204,7 @@ export default function MatchEvents() {
           open={openModalAddEvent}
           onCancel={onCancel}
         />
-      )}
+      }
       {openModalEditEvent && (
         <EditEvent
           refetch={refetch}

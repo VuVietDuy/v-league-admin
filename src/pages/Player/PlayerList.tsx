@@ -10,11 +10,11 @@ import {
   Table,
 } from "antd";
 import type { TableProps } from "antd";
-import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined, EyeOutlined } from "@ant-design/icons";
 import { Link, useNavigate } from "react-router-dom";
 
-import { IPlayer } from "../../type/player";
-import fetcher from "../../api/fetcher";
+import { IPlayer } from "@/type/player";
+import fetcher from "@/api/fetcher";
 import { useQuery } from "@tanstack/react-query";
 import { renderPositionText } from "@/utils/renderPositionText";
 
@@ -100,7 +100,13 @@ function PlayerList() {
       title: "",
       key: "action",
       render: (_, record) => (
-        <Space size="middle">
+        <Space size="small">
+          <Button
+            type="default"
+            onClick={() => navigate(`/players/${record.id}`)}
+          >
+            <EyeOutlined />
+          </Button>
           <Button type="primary" onClick={() => handleEdit(record.id)}>
             <EditOutlined />
           </Button>

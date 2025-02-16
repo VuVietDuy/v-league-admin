@@ -20,14 +20,14 @@ export default function AddEvent({
   const [selectedClub, setSelectedClub] = useState<number>();
   const [selectedPlayer, setSelectedPlayer] = useState<number>();
   const [selectedAssist, setSelectedAssist] = useState<number>();
-  const initialValues = {
+  const [initialValues, setInitialValues] = useState({
     matchId: matchId,
     clubId: undefined,
     playerId: undefined,
     eventType: "",
     eventTime: "",
     assistId: undefined,
-  };
+  });
 
   const onFinish = (values: any, { resetForm }: any) => {
     if (matchId) {
@@ -41,6 +41,14 @@ export default function AddEvent({
         refetch();
         onCancel();
         resetForm();
+        setInitialValues({
+          matchId: matchId,
+          clubId: undefined,
+          playerId: undefined,
+          eventType: "",
+          eventTime: "",
+          assistId: undefined,
+        });
       });
     }
   };
@@ -63,10 +71,7 @@ export default function AddEvent({
       {...props}
       title="Thêm sự kiến"
     >
-      <Formik
-        onSubmit={(values, { resetForm }) => onFinish(values, { resetForm })}
-        initialValues={initialValues}
-      >
+      <Formik onSubmit={onFinish} initialValues={initialValues}>
         {({ handleSubmit, handleChange, values, setFieldValue, resetForm }) => (
           <Form
             initialValues={initialValues}

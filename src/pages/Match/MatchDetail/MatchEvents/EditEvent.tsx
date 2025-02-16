@@ -1,11 +1,10 @@
 import { Button, Form, Input, message, Modal, Select } from "antd";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
 import { IPlayer } from "@/type/player";
 import fetcher from "@/api/fetcher";
 import { Formik } from "formik";
-import { ConsoleSqlOutlined } from "@ant-design/icons";
 
 export default function EditEvent({
   refetch,
@@ -19,7 +18,7 @@ export default function EditEvent({
 }: any) {
   const { matchId } = useParams();
   const [players, setPlayers] = useState<IPlayer[]>([]);
-  const [selectedClub, setSelectedClub] = useState<number>();
+  const [selectedClub, setSelectedClub] = useState<number>(editEvent.clubId);
   const [selectedPlayer, setSelectedPlayer] = useState<number>();
   const [selectedAssist, setSelectedAssist] = useState<number>();
   const initialValues = {
@@ -30,7 +29,6 @@ export default function EditEvent({
     eventTime: editEvent?.eventTime,
     assistId: editEvent?.assistId,
   };
-  console.log(editEvent);
 
   const onFinish = (values: any, { resetForm }: any) => {
     if (matchId) {
@@ -47,6 +45,14 @@ export default function EditEvent({
       });
     }
   };
+
+  useEffect(() => {
+    if (selectedClub === homeClub.id) {
+      setPlayers(homeClub.players);
+    } else {
+      setPlayers(awayClub.players);
+    }
+  }, []);
 
   const handleSelectClub = (e: any) => {
     setSelectedClub(e);
@@ -140,6 +146,7 @@ export default function EditEvent({
             <Form.Item label="Cầu thủ" name="playerId">
               <Select
                 value={values.playerId}
+                defaultValue={values.playerId}
                 onChange={(e) => {
                   setFieldValue("playerId", e), setSelectedPlayer(e);
                 }}
