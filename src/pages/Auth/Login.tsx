@@ -1,6 +1,7 @@
 import fetcher from "@/api/fetcher";
 import { setToken } from "@/store/slice/token.slice";
 import { loginUser } from "@/store/slice/user.slice";
+import { message } from "antd";
 import { ErrorMessage, Formik } from "formik";
 import { useDispatch } from "react-redux";
 import { NavLink, useNavigate } from "react-router-dom";
@@ -10,12 +11,20 @@ function Login() {
   const navigate = useNavigate();
   const handleSubmit = (values: any) => {
     console.log(values);
-    fetcher.post("auth/login", values).then((res) => {
-      console.log(res);
-      dispatch(loginUser(res.data.data.user));
-      dispatch(setToken(res.data.data.access_token));
-      navigate("/");
-    });
+    fetcher
+      .post("auth/login", values)
+      .then((res) => {
+        console.log(res);
+        dispatch(loginUser(res.data.data.user));
+        dispatch(setToken(res.data.data.access_token));
+        navigate("/");
+      })
+      .catch((err) => {
+        message.error(
+          "Đăng nhập thất bại, Email hoặc mật khẩu không chính xác!"
+        );
+        console.log("Error: " + err);
+      });
   };
   return (
     <div className="container flex flex-col items-center justify-center m-auto  h-screen">

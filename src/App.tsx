@@ -24,6 +24,7 @@ import SeasonClubs from "@/pages/Season/SeasonClubs/SeasonClubs";
 import Login from "./pages/Auth/Login";
 import { PersistGate } from "redux-persist/integration/react";
 import PlayerEdit from "./pages/Player/PlayerEdit";
+import { Profile } from "./pages/Profile/Profile";
 
 const queryClient = new QueryClient();
 
@@ -36,6 +37,8 @@ function App() {
             <Routes>
               <Route path="/login" element={<Login />} />
               <Route path="/" element={<RootLayout />}>
+                <Route path="/profile" element={<Profile />} />
+
                 <Route path="/users" element={<UserList />} />
                 <Route
                   path="/category/:tournament"

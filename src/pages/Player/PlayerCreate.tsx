@@ -69,7 +69,7 @@ function PlayerCreate() {
 
   const handleSubmit = async (values: any) => {
     const formData = new FormData();
-
+    console.log("chekc value", values);
     const dateOfBirthISO = values.dateOfBirth
       ? values.dateOfBirth.toISOString()
       : "";

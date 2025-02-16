@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { Button, Layout, Menu, theme } from "antd";
+import { Avatar, Button, Dropdown, Layout, Menu, Space, theme } from "antd";
 import {
   CameraOutlined,
   CopyrightOutlined,
+  DownOutlined,
+  LogoutOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
   UsergroupAddOutlined,
@@ -11,8 +13,12 @@ import {
 import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import Vleague1 from "@/assets/VLeague1.png";
 import Vleague2 from "@/assets/VLeague2.png";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/store/store";
+import { MenuProps } from "antd/lib";
+import { logoutUser } from "@/store/slice/user.slice";
+import { deleteToken } from "@/store/slice/token.slice";
+import defaultAvatar from "../assets/defaultAvatar.png";
 
 const { Header, Sider, Content } = Layout;
 
@@ -127,12 +133,14 @@ const menuItems = [
 const RootLayout = () => {
   const [collapsed, setCollapsed] = useState(false);
   const location = useLocation();
+  const dispatch = useDispatch();
 
   const {
     token: { colorBgContainer },
   } = theme.useToken();
 
   const accessToken = useSelector((state: RootState) => state.token);
+  const user = useSelector((state: RootState) => state.user);
   const navigate = useNavigate();
   useEffect(() => {
     if (!accessToken) {
@@ -168,6 +176,24 @@ const RootLayout = () => {
       )
     );
 
+  const handleLogout = () => {
+    navigate("/login");
+    dispatch(logoutUser());
+    dispatch(deleteToken());
+  };
+  const items: MenuProps["items"] = [
+    {
+      key: "1",
+      label: <span onClick={() => navigate("/profile")}>Tài khoản</span>,
+      icon: <UserOutlined />,
+    },
+
+    {
+      key: "2",
+      label: <span onClick={handleLogout}>Đăng xuất</span>,
+      icon: <LogoutOutlined />,
+    },
+  ];
   return (
     <Layout style={{ height: "100vh" }}>
       <Sider
@@ -196,7 +222,15 @@ const RootLayout = () => {
           transition: "all 0.2s",
         }}
       >
-        <Header style={{ padding: 0, background: colorBgContainer }}>
+        <Header
+          style={{
+            background: colorBgContainer,
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            padding: "0 16px",
+          }}
+        >
           <Button
             type="text"
             icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
@@ -207,6 +241,24 @@ const RootLayout = () => {
               height: 64,
             }}
           />
+          {user ? (
+            <Dropdown className="text-gray-900" menu={{ items }}>
+              <a onClick={(e) => e.preventDefault()}>
+                <Space>
+                  <p className="text-gray-900 font-bold">{user?.name}</p>
+
+                  <Avatar src={user?.avatar || defaultAvatar} />
+                  <DownOutlined className="text-gray-900" />
+                </Space>
+              </a>
+            </Dropdown>
+          ) : (
+            <Button>
+              <a href="/login" className=" text-nowrap">
+                Đăng nhập
+              </a>
+            </Button>
+          )}
         </Header>
         <Content>
           <Outlet />
