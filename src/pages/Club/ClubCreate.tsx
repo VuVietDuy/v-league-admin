@@ -187,7 +187,7 @@ const ClubCreate: React.FC = () => {
               </Col>
             </Row>
           </Col>
-          <Form.Item
+          {/* <Form.Item
             label="HÌnh ảnh SVĐ"
             name="logo"
             valuePropName="fileList"
@@ -207,7 +207,7 @@ const ClubCreate: React.FC = () => {
                 </div>
               )}
             </Upload>
-          </Form.Item>
+          </Form.Item> */}
           <Form.Item label="Địa chỉ SVĐ" name="stadiumAddress">
             <Input />
           </Form.Item>

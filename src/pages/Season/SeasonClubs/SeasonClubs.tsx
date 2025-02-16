@@ -13,7 +13,7 @@ import { IClub } from "@/type/club";
 import { useEffect, useState } from "react";
 import SearchClub from "./SearchClub";
 import fetcher from "@/api/fetcher";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 
 const columns: TableProps<IClub>["columns"] = [
@@ -33,7 +33,9 @@ const columns: TableProps<IClub>["columns"] = [
     title: "Tên câu lạc bộ",
     dataIndex: "name",
     key: "name",
-    render: (text) => <a>{text}</a>,
+    render: (_, record) => (
+      <Link to={`/clubs/${record.id}`}>{record.name}</Link>
+    ),
   },
   {
     title: "Sân vận động",

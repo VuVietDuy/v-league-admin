@@ -169,7 +169,7 @@ const RootLayout = () => {
     );
 
   return (
-    <Layout style={{ height: "100vh" }}>
+    <Layout style={{ minHeight: "100vh" }}>
       <Sider
         style={siderStyle}
         trigger={null}
