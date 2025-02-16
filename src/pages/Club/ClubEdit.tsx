@@ -35,7 +35,6 @@ const ClubEdit: React.FC = () => {
         return res.data.data;
       }),
   });
-  console.log("Check club", club);
 
   useEffect(() => {
     if (club) {

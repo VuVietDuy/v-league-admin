@@ -17,7 +17,7 @@ function Login() {
         console.log(res);
         dispatch(loginUser(res.data.data.user));
         dispatch(setToken(res.data.data.access_token));
-        navigate("/");
+        navigate("/current-season/vleague-1");
       })
       .catch((err) => {
         message.error(
