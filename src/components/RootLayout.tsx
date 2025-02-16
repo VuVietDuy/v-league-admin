@@ -241,7 +241,7 @@ const RootLayout = () => {
               height: 64,
             }}
           />
-          {user ? (
+          {user?.id ? (
             <Dropdown className="text-gray-900" menu={{ items }}>
               <a onClick={(e) => e.preventDefault()}>
                 <Space>
