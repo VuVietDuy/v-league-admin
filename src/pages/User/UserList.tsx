@@ -1,9 +1,5 @@
 import { Button, Card, Input, Select, Space, Table, Tag } from "antd";
-import {
-  DeleteOutlined,
-  EditOutlined,
-  SearchOutlined,
-} from "@ant-design/icons";
+import { DeleteOutlined } from "@ant-design/icons";
 import { useQuery } from "@tanstack/react-query";
 import fetcher from "@/api/fetcher";
 import { renderGenderText } from "@/utils/renderGenderText";
