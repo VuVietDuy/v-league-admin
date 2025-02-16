@@ -23,6 +23,7 @@ import MatchDetail from "@/pages/Match/MatchDetail/MatchDetail";
 import SeasonClubs from "@/pages/Season/SeasonClubs/SeasonClubs";
 import Login from "./pages/Auth/Login";
 import { PersistGate } from "redux-persist/integration/react";
+import PlayerEdit from "./pages/Player/PlayerEdit";
 
 const queryClient = new QueryClient();
 
@@ -61,6 +62,10 @@ function App() {
                 <Route path="/players" element={<PlayersList />} />
                 <Route path="/players/new" element={<PlayerCreate />} />
                 <Route path="/players/:playerId" element={<PlayerDetail />} />
+                <Route
+                  path="/players/:playerId/edit"
+                  element={<PlayerEdit />}
+                />
                 <Route path="/clubs" element={<ClubList />} />
                 <Route path="/clubs/new" element={<ClubCreate />} />
                 <Route path="/clubs/:clubId" element={<ClubDetail />} />
