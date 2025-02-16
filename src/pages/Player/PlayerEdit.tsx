@@ -54,7 +54,6 @@ function PlayerEdit() {
         return res.data.data;
       }),
   });
-  console.log("check player", player);
 
   const [form] = Form.useForm();
   useEffect(() => {
