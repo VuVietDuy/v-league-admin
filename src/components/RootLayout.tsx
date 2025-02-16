@@ -132,9 +132,7 @@ const RootLayout = () => {
     token: { colorBgContainer },
   } = theme.useToken();
 
-  const accessToken = useSelector(
-    (state: RootState) => state.token.accessToken
-  );
+  const accessToken = useSelector((state: RootState) => state.token);
   const navigate = useNavigate();
   useEffect(() => {
     if (!accessToken) {
