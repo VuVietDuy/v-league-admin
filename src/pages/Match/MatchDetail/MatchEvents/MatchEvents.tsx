@@ -1,4 +1,4 @@
-import { Button, Select, Spin, Table } from "antd";
+import { Button, message, Modal, Select, Spin, Table } from "antd";
 import { useEffect, useState } from "react";
 import { IEvent } from "@/type/event";
 import AddEvent from "./AddEvent";
@@ -6,9 +6,13 @@ import { TableProps } from "antd/lib";
 import { queryKeys } from "@/api/queryKeys";
 import fetcher from "@/api/fetcher";
 import { IMatch } from "@/type/match";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
-import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
+import {
+  DeleteOutlined,
+  ExclamationCircleOutlined,
+  PlusOutlined,
+} from "@ant-design/icons";
 import { renderEventTypeText } from "@/utils/renderEventTypeText";
 
 export default function MatchEvents() {
@@ -80,12 +84,40 @@ export default function MatchEvents() {
       title: "",
       key: "action",
       render: (_, record) => (
-        <Button danger size="middle">
+        <Button
+          danger
+          size="middle"
+          onClick={() => confirmDelete(record.id)}
+          loading={deleteEvent.isPending}
+        >
           <DeleteOutlined />
         </Button>
       ),
     },
   ];
+
+  const deleteEvent = useMutation({
+    mutationFn: (eventId: number) => fetcher.delete(`events/${eventId}`),
+    onSuccess: () => {
+      message.success("Xóa sự kiện thành công!");
+      refetch();
+    },
+    onError: () => {
+      message.error("Xóa sự kiện thất bại!");
+    },
+  });
+
+  const confirmDelete = (eventId: number) => {
+    Modal.confirm({
+      title: "Xác nhận xóa",
+      icon: <ExclamationCircleOutlined />,
+      content: "Bạn có chắc chắn muốn xóa sự kiện này không?",
+      okText: "Xóa",
+      okType: "danger",
+      cancelText: "Hủy",
+      onOk: () => deleteEvent.mutate(eventId),
+    });
+  };
   return (
     <div className="mt-4">
       <div className="flex mb-4">

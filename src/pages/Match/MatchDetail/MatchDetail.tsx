@@ -64,7 +64,7 @@ export default function MatchDetail() {
       {tab === "MatchOverview" && <MatchOverview />}
       {tab === "MacthEvents" && <MatchEvents />}
       {tab === "MatchLineups" && <MatchLineups />}
-      {/* {tab === "MatchStats" && <MatchStats />} */}
+      {tab === "MatchStats" && <MatchStats />}
     </Card>
   );
 }

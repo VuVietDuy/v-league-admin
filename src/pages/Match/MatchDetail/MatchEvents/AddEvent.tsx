@@ -17,7 +17,9 @@ export default function AddEvent({
 }: any) {
   const { matchId } = useParams();
   const [players, setPlayers] = useState<IPlayer[]>([]);
+  const [selectedClub, setSelectedClub] = useState<number>();
   const [selectedPlayer, setSelectedPlayer] = useState<number>();
+  const [selectedAssist, setSelectedAssist] = useState<number>();
   const initialValues = {
     matchId: matchId,
     clubId: undefined,
@@ -31,6 +33,9 @@ export default function AddEvent({
     if (matchId) {
       values.matchId = parseInt(values.matchId);
       values.eventTime = parseInt(values.eventTime);
+      values.clubId = selectedClub;
+      values.playerId = selectedPlayer;
+      values.assistId = selectedAssist;
       fetcher.post(`matches/${matchId}/events`, values).then((_) => {
         message.success("Thêm sự kiện thành công");
         refetch();
@@ -41,6 +46,7 @@ export default function AddEvent({
   };
 
   const handleSelectClub = (e: any) => {
+    setSelectedClub(e);
     if (e === homeClub.id) {
       setPlayers(homeClub.players);
     } else {
@@ -131,7 +137,9 @@ export default function AddEvent({
             <Form.Item label="Cầu thủ" name="playerId">
               <Select
                 value={values.playerId}
-                onChange={(e) => setSelectedPlayer(e)}
+                onChange={(e) => {
+                  setFieldValue("playerId", e), setSelectedPlayer(e);
+                }}
                 disabled={
                   values.eventType === "START" || values.eventType === "FINISH"
                 }
@@ -156,6 +164,7 @@ export default function AddEvent({
             <Form.Item label="Hỗ trợ" name="assistId">
               <Select
                 value={values.assistId}
+                onChange={(e) => setSelectedAssist(e)}
                 disabled={
                   values.eventType === "START" || values.eventType === "FINISH"
                 }
