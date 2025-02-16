@@ -21,19 +21,19 @@ interface FileType extends UploadFile {}
 
 const position = [
   {
-    key: "Goalkeeper",
+    key: "GOALKEEPER",
     name: "Thủ môn",
   },
   {
-    key: "Defender",
+    key: "DEFENDER",
     name: "Hậu vệ",
   },
   {
-    key: "Midfielder",
+    key: "MIDFIELDER",
     name: "Tiền vệ",
   },
   {
-    key: "Forward",
+    key: "FORWARD",
     name: "Tiền đạo",
   },
 ];
@@ -78,6 +78,7 @@ function PlayerCreate() {
     formData.append("dateOfBirth", dateOfBirthISO); // Use ISO format
     formData.append("nationality", values.nationality);
     formData.append("height", values.height);
+    formData.append("weight", values.weight);
     formData.append("clubId", values.clubId);
     formData.append("position", values.position);
 
@@ -148,15 +149,18 @@ function PlayerCreate() {
               >
                 <Input />
               </Form.Item>
-              <Form.Item
-                label="Chiều cao"
-                name="height"
-                rules={[
-                  { required: true, message: "Vui lòng nhập chiều cao!" },
-                ]}
-              >
-                <Input />
-              </Form.Item>
+              <Row gutter={[24, 24]}>
+                <Col span={12}>
+                  <Form.Item label="Chiều cao" name="height">
+                    <Input placeholder="Chiều cao" />
+                  </Form.Item>
+                </Col>
+                <Col span={12}>
+                  <Form.Item label="Cân nặng" name="weight">
+                    <Input placeholder="Cân nặng" />
+                  </Form.Item>
+                </Col>
+              </Row>
               <Form.Item
                 label="Câu lạc bộ"
                 name="clubId"
@@ -186,7 +190,11 @@ function PlayerCreate() {
                 </Select>
               </Form.Item>
               <Form.Item>
-                <Button type="primary" htmlType="submit">
+                <Button
+                  type="primary"
+                  className="float-right"
+                  htmlType="submit"
+                >
                   Thêm cầu thủ
                 </Button>
               </Form.Item>
